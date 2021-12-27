@@ -66,10 +66,16 @@
 #' In the latter case, two histories will start at different levels.
 #' @param family String, distribution used to fit duration of perceptual dominance
 #' phases. Options include \code{"gamma"} (default), \code{"lognormal"}, and \code{"normal"}.
+#' @param history_priors Named list of optional priors for population-level cumulative history
+#' parameters. Must follow the format \code{list("tau"=c(1, 0.15))} with values coding mean
+#' and standard deviation of the normal distribution.
+#' @param intercept_priors A vector of optional priors for population-level intercept
+#' parameter. Should be \code{c(<shape-mean>, <shape-sd>, <scale-mean>, <scale-sd>)}
+#  format for Gamma family, \code{c(<mean>, <sd>)} for normal and lognormal families.
+#  The values code mean and standard deviation of the normal distribution.
 #' @param chains Number of chains for sampling.
 #' @param cores Number of CPU cores to use for sampling. If omitted, All cores are used.
 #' @param ... Additional arguments passed to [rstan::sampling()][rstan::sampling] function.
-#'
 #' @return  An object of class [cumhist][cumhist-class()]
 #'
 #' @importFrom future availableCores
@@ -94,6 +100,8 @@ fit_cumhist <- function(data,
                         history_mix=0.2,
                         history_init=0,
                         family="gamma",
+                        history_priors=NULL,
+                        intercept_priors=NULL,
                         chains=1,
                         cores=NULL,
                         ...){
@@ -141,13 +149,30 @@ fit_cumhist <- function(data,
   }
 
   ## --- 4. History parameters ---
+  # using history priors, if supplied
+  default_priors <- list("tau_prior"=c(log(1), 0.15),
+                         "mixed_state_prior"=c(0, 1),
+                         "history_mix_prior"=c(0, 1))
+  if (!is.null(history_priors)){
+    if (!is.list(history_priors)) stop("history_priors parameters must be a named list")
+    if (is.null(names(history_priors))) stop("history_priors parameters must be a named list")
+    for(param_name in names(history_priors)){
+      if (paste0(param_name, "_prior") %in% names(default_priors)) {
+        # check validity priors
+        bistablehistory::check_normal_prior(history_priors[[param_name]], param_name)
+
+        # use custom priors
+        default_priors[[paste0(param_name, "_prior")]] <- history_priors[[param_name]]
+      }
+    }
+  }
+
   cumhist$data <- c(cumhist$data,
                     bistablehistory::evaluate_history_option("tau", tau, cumhist$data$randomN, Inf),
                     bistablehistory::evaluate_history_option("mixed_state", mixed_state, cumhist$data$randomN, 1),
                     bistablehistory::evaluate_history_option("history_mix", history_mix, cumhist$data$randomN, 1),
-                    list("tau_prior"=c(log(1), 0.75),
-                         "mixed_state_prior"=c(0, 1),
-                         "history_mix_prior"=c(0, 1)))
+                    default_priors)
+
 
   # --- 5. Check history_init
   cumhist$data$history_starting_values <- bistablehistory::evaluate_history_init(history_init)
@@ -157,9 +182,23 @@ fit_cumhist <- function(data,
   if (!family %in% names(supported_families)) stop(sprintf("Unsupported distribution family '%s'", family))
   lmN <- c("gamma"=2, "lognormal"=1, "exgauss"=2, "normal"=1)
   varianceN <- c("gamma"=0, "lognormal"=1, "normal"=1)
+
+  # priors
   a_prior <- list("gamma" = matrix(c(log(3), 5, log(3), 5), nrow=2, byrow = TRUE),
                   "lognormal" = matrix(c(log(3), 5), nrow=1, byrow = TRUE),
                   "normal" = matrix(c(3, 5), nrow=1, byrow = TRUE))
+  if (!is.null(intercept_priors)) {
+    if (family == "gamma"){
+      if (length(intercept_priors) != 4) stop(sprintf("Intercept priors for Gamma family must be four-elemenent vector, %d found", length(intercept_priors)))
+      bistablehistory::check_normal_prior(intercept_priors[1:2], "Prior for intercept of Gamma shape parameter")
+      bistablehistory::check_normal_prior(intercept_priors[3:4], "Prior for intercept of Gamma scale parameter")
+      a_prior[["gamma"]] <- matrix(intercept_priors, nrow=2, byrow = TRUE)
+    }
+    else {
+      bistablehistory::check_normal_prior(intercept_priors, "Prior for intercept parameter")
+      a_prior[[family]] <- intercept_priors
+    }
+  }
 
   cumhist$family <- family
   cumhist$data$family <- supported_families[family]
