@@ -18,6 +18,11 @@
 check_fixed_history_parameter <- function(param_name, param_value, randomN, upperLimit){
   if (!is.numeric(param_value)) stop(sprintf("%s must be numeric", param_name))
   if (!is.atomic(param_value)) stop(sprintf("%s must be an atomic vector", param_name))
+
+  if (length(randomN) != 1) stop(sprintf("Number of random level for %s must be a scalar", param_name))
+  if (as.integer(randomN) != randomN) stop(sprintf("Number of random level for %s must be an integer", param_name))
+  if (randomN < 1) stop(sprintf("Number of random level for %s must be positive", param_name))
+
   if (length(param_value) != 1 && length(param_value) != randomN) {
     stop(sprintf("Number ofvalues for %s must be either 1 or %d (number of random clusters)", param_name, randomN))
   }
@@ -27,3 +32,7 @@ check_fixed_history_parameter <- function(param_name, param_value, randomN, uppe
   if (length(param_value) != randomN) param_value <- rep(param_value, randomN)
   param_value
 }
+
+
+
+
