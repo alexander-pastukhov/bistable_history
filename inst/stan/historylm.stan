@@ -42,29 +42,6 @@ functions {
 
        return(ind);
    }
-
-    /**
-    * Creates signal level matrix based on target state (row) and
-    *   dominant state (column). Uses 1 (maximum) if states match,
-    *   0 (minimum) if an opposite clear state is dominant,
-    *   mixed_value, if it is a transition.
-    * @param mixed_level. Signal level that corresponds to mixed
-    *   perception / transition. Real, range 0..1.
-    * @return A matrix[2, 3] with row for target state and column
-    *   for the dominant state.
-    */
-    matrix state_to_signal_levels(real mixed_level){
-        matrix [2, 3] signal_level;
-
-        signal_level[1, 1] = 1;
-        signal_level[1, 2] = 0;
-        signal_level[1, 3] = mixed_level;
-        signal_level[2, 1] = 0;
-        signal_level[2, 2] = 1;
-        signal_level[2, 3] = mixed_level;
-
-        return signal_level;
-    }
 }
 data{
     // --- Family choice ---
@@ -88,7 +65,6 @@ data{
     // --- Random effects ---
     int<lower=1> randomN;                               // Number of levels for random effects
     int<lower=1, upper=randomN> irandom[rowsN];         // Index of a random effect cluster (participant, display, etc.)
-    int<lower=1, upper=randomN> irandom_clear[clearN];  // Index of a random effect cluster (participant, display, etc.)
 
     // --- Fixed effects ---
     int<lower=0> fixedN;
@@ -212,7 +188,10 @@ transformed parameters {
             if (run_start[iT]){
                 current_history = history_starting_values;
                 tau = session_tmean[iT] * tau_ind[irandom[iT]];
-                level = state_to_signal_levels(mixed_state_ind[irandom[iT]]);
+
+                // matrix with signal levels
+                level = [[1, 0, mixed_state_ind[irandom[iT]]], 
+                         [0, 1, mixed_state_ind[irandom[iT]]]];
             }
 
             // for valid percepts, we use history for parameter computation
