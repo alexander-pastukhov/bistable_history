@@ -236,7 +236,7 @@ fit_cumhist <- function(data,
                                     byrow = TRUE)
   }
   else {
-    if (!(length(history_effect_prior) %in% 2 * (1:lmN[family]))) {
+    if (!(length(history_effect_prior) %in% (2 * (1:lmN[family])))) {
       if (family == "gamma"){
         stop(sprintf("Priors for cumulative history effect be two- or four-elemenent vector, %d found",
                      length(history_effect_prior)))
