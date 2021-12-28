@@ -144,7 +144,7 @@ fit_cumhist <- function(data,
   if (is.null(fixed_effects)) {
     cumhist$data$fixedN <- 0
     cumhist$data$fixed_clear <- matrix(0, nrow = cumhist$data$clearN, ncol = 1)
-    cumhist$data$fixed_priors <- matrix(0, nrow = 1, ncol=2)
+    cumhist$data$fixed_priors <- matrix(0, nrow = 0, ncol=2)
   }
   else {
     fixed_priors <- c()
