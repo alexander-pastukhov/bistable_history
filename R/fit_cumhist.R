@@ -18,9 +18,9 @@
 #' dominance states. Optional, used to compute duration of the dominance
 #' phases, if these are not provided explicitly via \code{duration}
 #' parameter.
-#' @param random_effect String, name of the column that identifies random effect,
-#' e.g. individual participants, stimuli for a single participant, etc.
-#' If omitted, no random effect is assumed. If specified and
+#' @param random_effect String, name of the column that identifies random
+#' effect, e.g. individual participants, stimuli for a single participant,
+#' etc. If omitted, no random effect is assumed. If specified and
 #' there is more than one level (participant, stimulus, etc.), it is used
 #' in a hierarchical model.
 #' @param fixed_effects String or vector of strings. Name of column(s)
@@ -71,8 +71,15 @@
 #' and standard deviation of the normal distribution.
 #' @param intercept_priors A vector of optional priors for population-level intercept
 #' parameter. Should be \code{c(<shape-mean>, <shape-sd>, <scale-mean>, <scale-sd>)}
-#  format for Gamma family, \code{c(<mean>, <sd>)} for normal and lognormal families.
-#  The values code mean and standard deviation of the normal distribution.
+#' format for Gamma family, \code{c(<mean>, <sd>)} for normal and lognormal families.
+#' The values code mean and standard deviation of the normal distribution.
+#' @param history_effect_prior A vector of options priors for population-level slope
+#' of history effect. The values code mean and standard deviation of the normal distribution.
+#' Defaults to mu=0, sigma=1.
+#' @param fixed_effects_priors A named list of optional priors for fixed effects. Must
+#' follow the format \code{list("<name-of-variable"=c(<mu>, <sigma>))}, where <mu> and
+#' <sigma> are mean and standard deviation of a normal distribution. Defaults to mu=0,
+#' sigma=1.
 #' @param chains Number of chains for sampling.
 #' @param cores Number of CPU cores to use for sampling. If omitted, All cores are used.
 #' @param ... Additional arguments passed to [rstan::sampling()][rstan::sampling] function.
@@ -102,9 +109,11 @@ fit_cumhist <- function(data,
                         family="gamma",
                         history_priors=NULL,
                         intercept_priors=NULL,
+                        history_effect_prior=NULL,
+                        fixed_effects_priors=NULL,
                         chains=1,
                         cores=NULL,
-                        ...){
+                        ...) {
 
   # ----------------------------- Input checks -----------------------------
   cumhist <- list(data = as.list(bistablehistory::preprocess_data(data, state, duration, onset, random_effect, session, run)))
@@ -124,7 +133,7 @@ fit_cumhist <- function(data,
 
   ## --- 1. Prepare clean data ---
   cumhist$data$clear_duration <- cumhist$data$duration[cumhist$data$is_used]
-  cumhist$data$irandom_clear <-cumhist$data$irandom[cumhist$data$is_used]
+  cumhist$data$irandom_clear <- cumhist$data$irandom[cumhist$data$is_used]
 
   ## --- 2. Counts ---
   cumhist$data$rowsN <- length(cumhist$data$duration)
@@ -134,13 +143,13 @@ fit_cumhist <- function(data,
   ## --- 3. Check fixed effects
   if (is.null(fixed_effects)) {
     cumhist$data$fixedN <- 0
-    cumhist$data$fixed_clear <- matrix(0, nrow=cumhist$data$clearN, ncol=1)
+    cumhist$data$fixed_clear <- matrix(0, nrow = cumhist$data$clearN, ncol = 1)
   }
   else {
     # Checking that all columns are valid
-    for(current_fixed in fixed_effects){
+    for (current_fixed in fixed_effects) {
       if (!current_fixed %in% colnames(data)) stop(sprintf("Column '%s' for fixed effect variable is not in the table", current_fixed))
-      if (sum(is.na(data[[current_fixed]]))>0) stop(sprintf("Column '%s' contains NAs", current_fixed))
+      if (sum(is.na(data[[current_fixed]])) > 0) stop(sprintf("Column '%s' contains NAs", current_fixed))
       if (!is.numeric(data[[current_fixed]])) stop(sprintf("Column '%s' is not numeric", current_fixed))
     }
 
@@ -150,13 +159,13 @@ fit_cumhist <- function(data,
 
   ## --- 4. History parameters ---
   # using history priors, if supplied
-  default_priors <- list("tau_prior"=c(log(1), 0.15),
-                         "mixed_state_prior"=c(0, 1),
-                         "history_mix_prior"=c(0, 1))
-  if (!is.null(history_priors)){
+  default_priors <- list("tau_prior" = c(log(1), 0.15),
+                         "mixed_state_prior" = c(0, 1),
+                         "history_mix_prior" = c(0, 1))
+  if (!is.null(history_priors)) {
     if (!is.list(history_priors)) stop("history_priors parameters must be a named list")
     if (is.null(names(history_priors))) stop("history_priors parameters must be a named list")
-    for(param_name in names(history_priors)){
+    for (param_name in names(history_priors)) {
       if (paste0(param_name, "_prior") %in% names(default_priors)) {
         # check validity priors
         bistablehistory::check_normal_prior(history_priors[[param_name]], param_name)
@@ -178,43 +187,72 @@ fit_cumhist <- function(data,
   cumhist$data$history_starting_values <- bistablehistory::evaluate_history_init(history_init)
 
   ## --- 6. Family
-  supported_families <- c("gamma"=1, "lognormal"=2, "normal"=3)
+  supported_families <- c("gamma" = 1, "lognormal" = 2, "normal" = 3)
   if (!family %in% names(supported_families)) stop(sprintf("Unsupported distribution family '%s'", family))
-  lmN <- c("gamma"=2, "lognormal"=1, "exgauss"=2, "normal"=1)
-  varianceN <- c("gamma"=0, "lognormal"=1, "normal"=1)
+  lmN <- c("gamma" = 2, "lognormal" = 1, "exgauss" = 2, "normal" = 1)
+  varianceN <- c("gamma" = 0, "lognormal" = 1, "normal" = 1)
 
-  # priors
-  a_prior <- list("gamma" = matrix(c(log(3), 5, log(3), 5), nrow=2, byrow = TRUE),
-                  "lognormal" = matrix(c(log(3), 5), nrow=1, byrow = TRUE),
-                  "normal" = matrix(c(3, 5), nrow=1, byrow = TRUE))
+  cumhist$family <- family
+  cumhist$data$family <- supported_families[family]
+  cumhist$data$lmN <- lmN[family]
+  cumhist$data$varianceN <- varianceN[family]
+
+  # priors for the population-level intercept
+  a_prior <- list("gamma" = matrix(c(log(3), 5, log(3), 5), nrow = 2, byrow = TRUE),
+                  "lognormal" = matrix(c(log(3), 5), nrow = 1, byrow = TRUE),
+                  "normal" = matrix(c(3, 5), nrow = 1, byrow = TRUE))
   if (!is.null(intercept_priors)) {
     if (family == "gamma"){
       if (length(intercept_priors) != 4) stop(sprintf("Intercept priors for Gamma family must be four-elemenent vector, %d found", length(intercept_priors)))
       bistablehistory::check_normal_prior(intercept_priors[1:2], "Prior for intercept of Gamma shape parameter")
       bistablehistory::check_normal_prior(intercept_priors[3:4], "Prior for intercept of Gamma scale parameter")
-      a_prior[["gamma"]] <- matrix(intercept_priors, nrow=2, byrow = TRUE)
+      a_prior[["gamma"]] <- matrix(intercept_priors, nrow = 2, byrow = TRUE)
     }
     else {
       bistablehistory::check_normal_prior(intercept_priors, "Prior for intercept parameter")
       a_prior[[family]] <- intercept_priors
     }
   }
-
-  cumhist$family <- family
-  cumhist$data$family <- supported_families[family]
-  cumhist$data$lmN <- lmN[family]
-  cumhist$data$varianceN <- varianceN[family]
   cumhist$data$a_prior <- a_prior[[family]]
+
+  # priors for the effect of history
+  if (is.null(history_effect_prior)) {
+    cumhist$data$bH_prior <- matrix(rep(c(0, 1), times = lmN[family]),
+                                    nrow = lmN[family],
+                                    byrow = TRUE)
+  }
+  else {
+    if (!(length(history_effect_prior) %in% 2 * (1:lmN[family]))) {
+      if (family == "gamma"){
+        stop(sprintf("Priors for cumulative history effect be two- or four-elemenent vector, %d found",
+                     length(history_effect_prior)))
+    } else {
+      stop(sprintf("Priors for cumulative history effect be two-elemenent vector, %d found",
+                   length(history_effect_prior)))
+    }
+
+    if (family == "gamma" & length(history_effect_prior) == 4) {
+      bistablehistory::check_normal_prior(history_effect_prior[1:2], "Prior for history effect of Gamma shape parameter")
+      bistablehistory::check_normal_prior(history_effect_prior[3:4], "Prior for history effect of Gamma scale parameter")
+      cumhist$data$bH_prior <- matrix(history_effect_prior, nrow = 2, byrow = TRUE)
+    } else {
+      bistablehistory::check_normal_prior(history_effect_prior, "Prior for history effect")
+      cumhist$data$bH_prior <- matrix(rep(history_effect_prior, times = lmN[family]),
+                                      nrow = lmN[family],
+                                      byrow = TRUE)
+    }
+  }
+
 
   # ----------------------------- Sampling -----------------------------
   # deciding on number of cores
-  if (is.null(cores)) cores = future::availableCores()
+  if (is.null(cores)) cores <- future::availableCores()
 
   if (chains > 0) {
     cumhist$stanfit <- rstan::sampling(stanmodels$historylm,
-                                      data=cumhist$data,
-                                      chains=chains,
-                                      cores=cores,
+                                      data = cumhist$data,
+                                      chains = chains,
+                                      cores = cores,
                                       ...)
   }
   else {
