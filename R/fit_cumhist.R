@@ -148,6 +148,8 @@ fit_cumhist <- function(data,
   }
   else {
     fixed_priors <- c()
+    if (!is.list(fixed_effects_priors)) stop("fixed_effects_priors parameters must be a named list")
+
     # Checking that all columns are valid
     for (current_fixed in fixed_effects) {
       if (!current_fixed %in% colnames(data)) stop(sprintf("Column '%s' for fixed effect variable is not in the table", current_fixed))
@@ -159,6 +161,7 @@ fit_cumhist <- function(data,
     if (current_fixed %in% names(fixed_effects_priors)) {
       bistablehistory::check_normal_prior(fixed_effects_priors[[current_fixed]], current_fixed)
       fixed_priors <- c(fixed_priors, fixed_effects_priors[[current_fixed]])
+      fixed_effects_priors <- fixed_effects_priors[names(fixed_effects_priors) != current_fixed]
     } else {
       fixed_priors <- c(fixed_priors, c(0, 1))
     }
@@ -169,6 +172,7 @@ fit_cumhist <- function(data,
                                         nrow = length(fixed_effects),
                                         ncol = 2,
                                         byrow = TRUE)
+    if (length(fixed_effects_priors) > 0) warning(paste0("Some priors for fixed effects were not matched: ", paste(names(fixed_effects_priors), collapse = ", ")))
   }
 
   ## --- 4. History parameters ---
