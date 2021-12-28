@@ -2,7 +2,7 @@
 ## First CRAN Release
 * Initial CRAN Release
 
-# bistablehistory 1.0.1
+# bistablehistory 1.1.0
 ## Improvements
-* Custom prior values for history parameters
+* Custom prior values for history parameters, intercept terms, history effect, and fixed effects
 * Simplified Stan code
