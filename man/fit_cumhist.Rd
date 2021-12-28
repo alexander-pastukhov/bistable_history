@@ -20,6 +20,8 @@ fit_cumhist(
   family = "gamma",
   history_priors = NULL,
   intercept_priors = NULL,
+  history_effect_prior = NULL,
+  fixed_effects_priors = NULL,
   chains = 1,
   cores = NULL,
   ...
@@ -44,9 +46,9 @@ dominance states. Optional, used to compute duration of the dominance
 phases, if these are not provided explicitly via \code{duration}
 parameter.}
 
-\item{random_effect}{String, name of the column that identifies random effect,
-e.g. individual participants, stimuli for a single participant, etc.
-If omitted, no random effect is assumed. If specified and
+\item{random_effect}{String, name of the column that identifies random
+effect, e.g. individual participants, stimuli for a single participant,
+etc. If omitted, no random effect is assumed. If specified and
 there is more than one level (participant, stimulus, etc.), it is used
 in a hierarchical model.}
 
@@ -106,7 +108,18 @@ parameters. Must follow the format \code{list("tau"=c(1, 0.15))} with values cod
 and standard deviation of the normal distribution.}
 
 \item{intercept_priors}{A vector of optional priors for population-level intercept
-parameter. Should be \code{c(<shape-mean>, <shape-sd>, <scale-mean>, <scale-sd>)}}
+parameter. Should be \code{c(<shape-mean>, <shape-sd>, <scale-mean>, <scale-sd>)}
+format for Gamma family, \code{c(<mean>, <sd>)} for normal and lognormal families.
+The values code mean and standard deviation of the normal distribution.}
+
+\item{history_effect_prior}{A vector of options priors for population-level slope
+of history effect. The values code mean and standard deviation of the normal distribution.
+Defaults to mu=0, sigma=1.}
+
+\item{fixed_effects_priors}{A named list of optional priors for fixed effects. Must
+follow the format \code{list("<name-of-variable"=c(<mu>, <sigma>))}, where <mu> and
+<sigma> are mean and standard deviation of a normal distribution. Defaults to mu=0,
+sigma=1.}
 
 \item{chains}{Number of chains for sampling.}
 
