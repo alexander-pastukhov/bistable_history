@@ -45,7 +45,7 @@ functions {
 }
 data{
     // --- Family choice ---
-    int<lower=1, upper=3> family; 
+    int<lower=1, upper=3> family;
     // 1 - Gamma, linear model for both shape and rate
     // 2 - Log normal with linear model for the mean
     // 3 - Normal with linear model for the mean
@@ -77,7 +77,7 @@ data{
     int<lower=1, upper=4> tau_option;  // 1 - constant provided by user, 2 - fit single tau for all, 3 - independent taus, 4 - pooled (multilevel) taus
     real<lower=0> fixed_tau;           // a fixed option (tau_option == 1)
     int tau_mu_size;                   // dimensionality, 1 - sampled, 0 - unused
-    int tau_sigma_size;                // dimensionality, 1 - sampled, 0 - unused 
+    int tau_sigma_size;                // dimensionality, 1 - sampled, 0 - unused
     int tau_rnd_size;                  // dimensionality, randomN - sampled, 0 - unused
     real tau_prior[2];                 // prior
 
@@ -103,6 +103,12 @@ data{
 
     // intercept: independent for each parameter and random cluster
     real a_prior[lmN, 2];
+
+    // priors for effect of history
+    real bH_prior[lmN, 2];
+
+    // priors for fixed effects
+    matrix[fixedN > 0 ? fixedN : 0, 2] fixed_priors;
 }
 transformed data {
     // Constants for likelihood index
@@ -159,7 +165,7 @@ parameters {
 }
 transformed parameters {
     vector[clearN] lm_param[lmN];
-    {   
+    {
         // Service variables for computing cumulative history
         matrix[2, 3] level;
         real current_history[2];
@@ -190,7 +196,7 @@ transformed parameters {
                 tau = session_tmean[iT] * tau_ind[irandom[iT]];
 
                 // matrix with signal levels
-                level = [[1, 0, mixed_state_ind[irandom[iT]]], 
+                level = [[1, 0, mixed_state_ind[irandom[iT]]],
                          [0, 1, mixed_state_ind[irandom[iT]]]];
             }
 
@@ -265,13 +271,15 @@ model {
         a[iLM] ~ normal(a_prior[iLM, 1], a_prior[iLM, 2]);
 
         // effect of history
-        bH_mu[iLM] ~ normal(0, 1);
+        bH_mu[iLM] ~ normal(bH_prior[iLM, 1], bH_prior[iLM, 2]);
         if (randomN > 1) {
             bH_sigma[iLM] ~ exponential(1);
             bH_rnd[iLM] ~ normal(0, 1);
         }
 
-        if (fixedN > 0) bF[iLM] ~ normal(0, 1);
+        if (fixedN > 0) {
+          for(iF in 1:fixedN) bF[iLM][iF] ~ normal(fixed_priors[iF, 1], fixed_priors[iF, 2]);
+        }
     }
 
     // variance
