@@ -144,8 +144,10 @@ fit_cumhist <- function(data,
   if (is.null(fixed_effects)) {
     cumhist$data$fixedN <- 0
     cumhist$data$fixed_clear <- matrix(0, nrow = cumhist$data$clearN, ncol = 1)
+    cumhist$data$fixed_priors <- matrix(0, nrow = 1, ncol=2)
   }
   else {
+    fixed_priors <- c()
     # Checking that all columns are valid
     for (current_fixed in fixed_effects) {
       if (!current_fixed %in% colnames(data)) stop(sprintf("Column '%s' for fixed effect variable is not in the table", current_fixed))
@@ -153,8 +155,20 @@ fit_cumhist <- function(data,
       if (!is.numeric(data[[current_fixed]])) stop(sprintf("Column '%s' is not numeric", current_fixed))
     }
 
+    # checking for custom prior
+    if (current_fixed %in% names(fixed_effects_priors)) {
+      bistablehistory::check_normal_prior(fixed_effects_priors[[current_fixed]], current_fixed)
+      fixed_priors <- c(fixed_priors, fixed_effects_priors[[current_fixed]])
+    } else {
+      fixed_priors <- c(fixed_priors, c(0, 1))
+    }
+
     cumhist$data$fixedN <- length(fixed_effects)
     cumhist$data$fixed_clear <- as.matrix(data[cumhist$data$is_used, fixed_effects])
+    cumhist$data$fixed_priors <- matrix(fixed_priors,
+                                        nrow = length(fixed_effects),
+                                        ncol = 2,
+                                        byrow = TRUE)
   }
 
   ## --- 4. History parameters ---
@@ -226,11 +240,11 @@ fit_cumhist <- function(data,
       if (family == "gamma"){
         stop(sprintf("Priors for cumulative history effect be two- or four-elemenent vector, %d found",
                      length(history_effect_prior)))
-    } else {
-      stop(sprintf("Priors for cumulative history effect be two-elemenent vector, %d found",
-                   length(history_effect_prior)))
+      } else {
+        stop(sprintf("Priors for cumulative history effect be two-elemenent vector, %d found",
+                     length(history_effect_prior)))
+      }
     }
-
     if (family == "gamma" & length(history_effect_prior) == 4) {
       bistablehistory::check_normal_prior(history_effect_prior[1:2], "Prior for history effect of Gamma shape parameter")
       bistablehistory::check_normal_prior(history_effect_prior[3:4], "Prior for history effect of Gamma scale parameter")
