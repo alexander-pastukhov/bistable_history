@@ -19,7 +19,7 @@ Summary for a cumhist object
 }
 \examples{
 \donttest{
-br_fit <- fit_cumhist(br_singleblock, state="State", duration="Duration", fixed="Time")
+br_fit <- fit_cumhist(br_singleblock, state="State", duration="Duration", fixed_effects="Time")
 summary(br_fit)
 }
 }
