@@ -13,7 +13,7 @@
 #'
 #' @examples
 #' \donttest{
-#' br_fit <- fit_cumhist(br_singleblock, state="State", duration="Duration")
+#' br_fit <- fit_cumhist(br_singleblock, state = "State", duration = "Duration")
 #' extract_history(br_fit)
 #' }
 extract_history <- function(object)
