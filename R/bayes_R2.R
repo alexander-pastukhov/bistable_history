@@ -28,7 +28,7 @@
 #'
 #' @examples
 #' \donttest{
-#' br_fit <- fit_cumhist(br_singleblock, state="State", duration="Duration")
+#' br_fit <- fit_cumhist(br_singleblock, state = "State", duration = "Duration")
 #' bayes_R2(br_fit)
 #' }
 bayes_R2.cumhist <- function(object, summary=TRUE, probs=c(0.055, 0.945), ...){
