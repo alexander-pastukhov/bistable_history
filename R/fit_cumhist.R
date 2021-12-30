@@ -92,7 +92,7 @@
 #' @examples
 #' \donttest{
 #' data(br_singleblock)
-#' gamma_fit <- fit_cumhist(br_singleblock, state="State", duration="Duration")
+#' gamma_fit <- fit_cumhist(br_singleblock, state = "State", duration = "Duration")
 #' }
 fit_cumhist <- function(data,
                         state,
