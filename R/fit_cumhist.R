@@ -148,7 +148,9 @@ fit_cumhist <- function(data,
   }
   else {
     fixed_priors <- c()
-    if (!is.list(fixed_effects_priors)) stop("fixed_effects_priors parameters must be a named list")
+    if (!is.null(fixed_effects_priors)) {
+      if (!is.list(fixed_effects_priors)) stop("fixed_effects_priors parameters must be a named list")
+    }
 
     # Checking that all columns are valid
     for (current_fixed in fixed_effects) {
