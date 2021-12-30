@@ -54,8 +54,9 @@
 #' @export
 #'
 #' @examples
-#' df <- compute_history(br_singleblock, state="State",
-#'     duration="Duration", tau=1, mixed_state=0.5, history_init=0)
+#' df <- compute_history(br_singleblock, state = "State",
+#'                       duration = "Duration", tau = 1,
+#'                       mixed_state = 0.5, history_init = 0)
 compute_history <- function(data,
                             state,
                             duration=NULL,
