@@ -34,7 +34,7 @@ A distribution of these so-called dominance phases typically has a right-skewed 
 knitr::include_graphics("gamma-distribution.png")
 ```
 
-However, the individual dominance phases show a subtle but consistent serial dependence, see, for example, [van Ee (2009)](https://doi.org/10.1364/JOSAA.26.002612). This serial dependence is thought to reflect accumulation of slow adaptation [(Pastukhov et.al., 2013)](https://doi.org/10.3389/fncom.2013.00017) or prediction error [(Weilnhammer et al., 2017)[https://doi.org/10.1371/journal.pcbi.1005536] for the dominant percept. This slow accumulation process can be described via a homogeneous first order process. A brief summary on the formula and examples of accumulation over time for different initial values, signal strength, and time constants are presented below. For further details, please refer to [(Pastukhov & Braun, 2011)](https://doi.org/10.1167/11.10.12).
+However, the individual dominance phases show a subtle but consistent serial dependence, see, for example, [van Ee (2009)](https://doi.org/10.1364/JOSAA.26.002612). This serial dependence is thought to reflect accumulation of slow adaptation [(Pastukhov et.al., 2013)](https://doi.org/10.3389/fncom.2013.00017) or prediction error [(Weilnhammer et al., 2017)](https://doi.org/10.1371/journal.pcbi.1005536) for the dominant percept. This slow accumulation process can be described via a homogeneous first order process. A brief summary on the formula and examples of accumulation over time for different initial values, signal strength, and time constants are presented below. For further details, please refer to [(Pastukhov & Braun, 2011)](https://doi.org/10.1167/11.10.12).
 
 ---
 
