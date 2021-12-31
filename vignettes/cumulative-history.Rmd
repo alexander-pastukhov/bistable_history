@@ -3,6 +3,7 @@ title: "Cumulative History"
 author: "Alexander (Sasha) Pastukhov"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
+bibliography: cumulative-history.bib  
 vignette: >
   %\VignetteIndexEntry{Cumulative History}
   %\VignetteEngine{knitr::rmarkdown}
@@ -38,10 +39,10 @@ However, the individual dominance phases show a subtle but consistent serial dep
 
 ---
 
-The cumulative history for a perceptual state computed via a homogeneous first order process:
-$$\frac{dx_i}{dt} = \frac{1}{\tau} (-x_i + S_i(t))$$
+The cumulative history for a perceptual state is computed via a homogeneous first order process (for details on first order linear differential equations please refer to chapter 2 in @Wilson1999):
+$$\frac{dh_i}{dt} = \frac{1}{\tau} (-h_i + S_i(t))$$
 
-where $\tau$ is the time constant, $x_i$ is cumulative history and $S_i(t)$ is current signal level for the state _i_, so that
+where $\tau$ is the time constant, $h_i$ is cumulative history and $S_i(t)$ is current signal level for for the i<sup>th</sup> perceptual state, so that
 $$S(t) = \begin{cases}
   1 & \text{if state $i$ is dominant}\\
   0 & \text{if state $i$ is suppessed}\\
@@ -51,16 +52,17 @@ $$S(t) = \begin{cases}
 The general solution for the equation is
 
 $$
-x_i(t) = A e^{-t/\tau} + \frac{1}{\tau} \int_{0}^{t} e^{-(t'-t)/\tau} S(t') dt'
+h_i(t) = A e^{-t/\tau} + \frac{1}{\tau} \int_{0}^{t} e^{-(t'-t)/\tau} S(t') dt'
 $$
 
-Assuming a constant signal $S$, we obtain
+where $A$ is chosen to satisfy the initial condition. Assuming a constant signal $S$, we obtain
 $$
-x_i(t) = A e^{-t/\tau} + S (1 - e^{-t/\tau})
+h_i(t) = A e^{-t/\tau} + S_i \cdot (1 - e^{-t/\tau})
 $$
 
-In our case, we are interested in change of cumulative history during a particular dominance phase that start at time $t$ and end at time $t + \Delta t$. Solving for initial condition $x_i(t)$ and $S$:
-$$x_i(t + \Delta t) = x_i(t) + (S - x_i(t)) \cdot (1 - e^{-\Delta t/\tau})\\
+In our case, we are interested in a value of cumulative history following a dominance phase that starts at time $t$, ends at time $t + \Delta t$, and has a constant signal strength $S_i$. Solving for initial condition $h_i(t)$ and $S_i$:
+$$h_i(t + \Delta t) = 
+x_i(t + \Delta t) = x_i(t) + (S - x_i(t)) \cdot (1 - e^{-\Delta t/\tau})\\
 x_i(t + \Delta t) = S + (x_i(t) - S)  \cdot e^{-\Delta t/\tau}$$
 
 
@@ -89,4 +91,8 @@ ggplot(df, aes(x=t, y=x, color=Parameters)) +
 As for a bistable case there are two history states (one for each perceptual state), we compute a history "mixture" as 
 $$H_{mix} = \text{history_mix} \cdot H_{dominant} + (1-\text{history_mix}) \cdot H_{suppressed}$$
 where `history_mix` is a parameter that is either specified (the `fit_cumhist()` function uses a default of `0.2`) or fitted, whereas $H_{dominant}$ and $H_{suppressed}$ are history states for the currently dominant and suppressed states, respectively. _E.g._, if a left eye dominates during following phase, $H_{dominant} = H_{left}$ and $H_{suppressed} = H_{right}$ and vice versa.
+
+## References
+
+<div id="refs"></div>
 
