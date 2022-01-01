@@ -105,7 +105,9 @@ Identical approach is take for $\tau$, if `tau=' "1|random"'` was specified (sam
 * A single value is fitted for each main effect, irrespective of whether a random effect was specified.
 * You cannot specify an interaction either between fixed effects or between a fixed effect and cumulative history variable.
 
-Although this limits usability of the fixed effects, these restrictions allowed for both a simpler model specification and a simpler underlying code. If you do require more complex models, please refer to  [companion vignette](writing-stan-code.html) that provides several examples on writing model using Stan directly.
+Although this limits usability of the fixed effects, these restrictions allowed for both a simpler model specification and a simpler underlying code. If you do require more complex models, please refer to  [companion vignette](writing-stan-code.html) that provides an example on writing model using Stan directly.
+
+You can specify custom priors (a mean and a standard deviation of a prior normal distribution) via `history_effect_prior` and `fixed_effects_priors` arguments. The former accepts a vector with mean and standard deviation, whereas the latter takes a named list in format \code{list("<fixed parameter name>"=c(<mean>, <std>))}.
 
 Once fitted, you can use `fixef()` function to extract a posterior distribution or its summary for each effect.
 
@@ -124,7 +126,11 @@ Note that although `history_init` accepts only fixed values either a single valu
 * `'random'` : an _independent_ tau is fitted for each random cluster (participant, displays, etc.). `random_effect` argument must be specified.
 * `'1|random'` : values for individual random cluster are sampled from a fitted population distribution (_pooled_ values). `random_effect` argument must be specified.
 
+You can specify custom priors for each cumulative history parameter via `history_priors` argument by specifying mean and standard deviation of a prior normal distribution. The `history_priors` argument must be a named list, \code{list("<parameter name>"=c(<mean>, <std>))}, e.g., `history_priors = list("tau"=c(1, 0.15))`.
+
 Once fitted, you can use `history_tau()`, `history_mixed_state()`, and `history_mix()` functions to obtain a posterior distribution or its summary for each parameter.
+
+
 
 ## Distribution family
 `fit_cumhist` currenly supports three distributions: `'gamma'`, `'lognormal'`, and `'normal'`.
