@@ -18,7 +18,10 @@
 #'
 #' @examples
 #' \donttest{
-#' br_fit <- fit_cumhist(br_singleblock, state = "State", duration = "Duration", fixed_effects = "Time")
+#' br_fit <- fit_cumhist(br_singleblock,
+#'                       state = "State",
+#'                       duration = "Duration",
+#'                       fixed_effects = "Time")
 #' fixef(br_fit)
 #' }
 fixef <- function(object, summary=TRUE, probs=c(0.055, 0.945)){

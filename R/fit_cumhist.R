@@ -77,8 +77,8 @@
 #' of history effect. The values code mean and standard deviation of the normal distribution.
 #' Defaults to mu=0, sigma=1.
 #' @param fixed_effects_priors A named list of optional priors for fixed effects. Must
-#' follow the format \code{list("<name-of-variable"=c(<mu>, <sigma>))}, where <mu> and
-#' <sigma> are mean and standard deviation of a normal distribution. Defaults to mu=0,
+#' follow the format \code{list("<name-of-variable>"=c(<mu>, <sigma>))}, where \code{<mu>} and
+#' \code{<sigma>} are mean and standard deviation of a normal distribution. Defaults to mu=0,
 #' sigma=1.
 #' @param chains Number of chains for sampling.
 #' @param cores Number of CPU cores to use for sampling. If omitted, All cores are used.
