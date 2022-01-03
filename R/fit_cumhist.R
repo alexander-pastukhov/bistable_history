@@ -52,15 +52,6 @@
 #' of two numbers \code{c(mu, kappa)} that specifies, correspondingly, mean
 #' (range 0..1) and precision (>0) of beta proportion distribution, it
 #' should be sampled from. Defaults to a fixed value of \code{0.5}.
-#' @param history_mix Specifies how cumulative history levels for
-#' the same and opposite perceptual states are combined when used to
-#' predict dominance phase durations, so that \code{history = history_mix
-#' * history_same + (1 - history_mix) * history_opposite}. Either a single
-#' number (range 0..1) that will be used as a fixed level or a vector
-#' of two numbers \code{c(mu, kappa)} that specifies, correspondingly, mean
-#' (range 0..1) and precision (>0) of beta proportion distribution, it
-#' should be sampled from. Defaults to a fixed value of \code{0}
-#' (predictions are made using cumulative history for the opposite state).
 #' @param history_init Initial value for cumulative history computation. Either
 #' a numeric scalar in 0..1 range or a vector of two numbers in 0..1 range.
 #' In the latter case, two histories will start at different levels.
@@ -104,7 +95,6 @@ fit_cumhist <- function(data,
                         fixed_effects=NULL,
                         tau=NULL,
                         mixed_state=0.5,
-                        history_mix=0.2,
                         history_init=0,
                         family="gamma",
                         history_priors=NULL,
@@ -127,7 +117,6 @@ fit_cumhist <- function(data,
   cumhist$fixed_effects <- fixed_effects
   cumhist$tau <- tau
   cumhist$mixed_state <- mixed_state
-  cumhist$history_mix <- history_mix
   cumhist$history_init <- history_init
   cumhist$Call <- match.call()
 
@@ -143,7 +132,7 @@ fit_cumhist <- function(data,
   ## --- 3. Check fixed effects
   if (is.null(fixed_effects)) {
     cumhist$data$fixedN <- 0
-    cumhist$data$fixed_clear <- matrix(0, nrow = cumhist$data$clearN, ncol = 1)
+    cumhist$data$fixed <- matrix(0, nrow = cumhist$data$rowsN, ncol = 0)
     cumhist$data$fixed_priors <- matrix(0, nrow = 0, ncol=2)
   }
   else {
@@ -169,7 +158,7 @@ fit_cumhist <- function(data,
     }
 
     cumhist$data$fixedN <- length(fixed_effects)
-    cumhist$data$fixed_clear <- as.matrix(data[cumhist$data$is_used, fixed_effects])
+    cumhist$data$fixed <- as.matrix(data[, fixed_effects])
     cumhist$data$fixed_priors <- matrix(fixed_priors,
                                         nrow = length(fixed_effects),
                                         ncol = 2,
@@ -180,8 +169,7 @@ fit_cumhist <- function(data,
   ## --- 4. History parameters ---
   # using history priors, if supplied
   default_priors <- list("tau_prior" = c(log(1), 0.15),
-                         "mixed_state_prior" = c(0, 1),
-                         "history_mix_prior" = c(0, 1))
+                         "mixed_state_prior" = c(0, 1))
   if (!is.null(history_priors)) {
     if (!is.list(history_priors)) stop("history_priors parameters must be a named list")
     if (is.null(names(history_priors))) stop("history_priors parameters must be a named list")
@@ -199,7 +187,6 @@ fit_cumhist <- function(data,
   cumhist$data <- c(cumhist$data,
                     bistablehistory::evaluate_history_option("tau", tau, cumhist$data$randomN, Inf),
                     bistablehistory::evaluate_history_option("mixed_state", mixed_state, cumhist$data$randomN, 1),
-                    bistablehistory::evaluate_history_option("history_mix", history_mix, cumhist$data$randomN, 1),
                     default_priors)
 
 

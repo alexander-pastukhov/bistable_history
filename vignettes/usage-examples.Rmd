@@ -52,9 +52,9 @@ historyef(gamma_fit)
 
 The following model is fitted for the example above, see also [companion vignette](cumulative-history.html) for details on cumulative history computation.
 $$Duration[i] \sim  Gamma(shape[i], rate[i]) \\
-log(shape[i]) = \alpha^{shape} + \beta^{shape}_H \cdot H_{mix}[i] \\
-log(rate[i]) = \alpha^{rate} + \beta^{rate}_H \cdot H_{mix}[i] \\
-H_{mix}[i] = \text{cumulative_history}(\tau,\text{history_mixture}, \text{history_init})\\
+log(shape[i]) = \alpha^{shape} + \beta^{shape}_H \cdot \Delta h[i] \\
+log(rate[i]) = \alpha^{rate} + \beta^{rate}_H \cdot \Delta h[i] \\
+\Delta h[i] = \text{cumulative_history}(\tau, \text{history_init})\\
 \alpha^{shape}, \alpha^{rate} \sim Normal(log(3), 5) \\
 \beta^{shape}_H, \beta^{rate}_H \sim Normal(0, 1) \\
 \tau \sim Normal(log(1), 0.75)$$
@@ -116,7 +116,6 @@ Once fitted, you can use `fixef()` function to extract a posterior distribution 
 
 * `tau` : a _normalized_ time constant in units of mean dominance phase duration.
 * `mixed_state` : value used for mixed/transition state phases, defaults to `0.5`.
-* `history_mix` : weight used to compute a weighted cumulative history, see [Cumulative History](cumulative-history.html) vignette. Defaults to `0.2`.
 * `history_init` : an initial value for cumulative history at the onset of each run. Defaults to `0`.
 
 Note that although `history_init` accepts only fixed values either a single value used for both states or a vector of two. In contrast, both fixed and fitted values can be used for the other three parameters. Here are possible function argument values
@@ -128,7 +127,7 @@ Note that although `history_init` accepts only fixed values either a single valu
 
 You can specify custom priors for each cumulative history parameter via `history_priors` argument by specifying mean and standard deviation of a prior normal distribution. The `history_priors` argument must be a named list, \code{list("<parameter name>"=c(<mean>, <std>))}, e.g., `history_priors = list("tau"=c(1, 0.15))`.
 
-Once fitted, you can use `history_tau()`, `history_mixed_state()`, and `history_mix()` functions to obtain a posterior distribution or its summary for each parameter.
+Once fitted, you can use `history_tau()` and `history_mixed_state()`functions to obtain a posterior distribution or its summary for each parameter.
 
 
 

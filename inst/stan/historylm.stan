@@ -68,7 +68,7 @@ data{
 
     // --- Fixed effects ---
     int<lower=0> fixedN;
-    matrix[clearN, fixedN > 0 ? fixedN : 1] fixed_clear;
+    matrix[rowsN, fixedN > 0 ? fixedN : 0] fixed;
 
     // --- Cumulative history parameters
     real<lower=0, upper=1> history_starting_values[2]; // Starting values for cumulative history at the beginning of the run
@@ -88,14 +88,6 @@ data{
     int mixed_state_sigma_size;               // dimensionality, 1 - sampled, 0 - unused
     int mixed_state_rnd_size;                 // dimensionality, randomN - sampled, 0 - unused
     real mixed_state_prior[2];                // prior
-
-    // History-mixing proportion, used as history_mix * history_same - (1-history_mix) * history_different
-    int<lower=1, upper=4> history_mix_option; // 1 - constant provided by user, 2 - fit single tau for all, 3 - independent taus, 4 - pooled (multilevel) taus
-    real<lower=0, upper=1> fixed_history_mix; // fixed proportion of history mixing (history_mix_option == 1)
-    int history_mix_mu_size;                  // dimensionality, 1 - sampled, 0 - unused
-    int history_mix_sigma_size;               // dimensionality, 1 - sampled, 0 - unused
-    int history_mix_rnd_size;                 // dimensionality, randomN - sampled, 0 - unused
-    real history_mix_prior[2];                // prior
 
     // --- Linear model ---
     int<lower=1> lmN; // number of linear models, i.e., distribution parameters that are modelled
@@ -143,11 +135,6 @@ parameters {
     vector<lower=0>[mixed_state_sigma_size] mixed_state_sigma; // population-level variance
     vector[mixed_state_rnd_size] mixed_state_rnd;     // individuals
 
-    // History mixture
-    vector[history_mix_mu_size] history_mix_mu; // population-level mean
-    vector<lower=0>[history_mix_sigma_size] history_mix_sigma; // population-level variance
-    vector[history_mix_rnd_size] history_mix_rnd; // individuals
-
     // --- Linear model ---
     // Independent intercept for each random cluster
     vector[randomN] a[lmN];
@@ -170,7 +157,7 @@ transformed parameters {
         matrix[2, 3] level;
         real current_history[2];
         real tau;
-        real hmix;
+        real dH;
 
         // Index of clear percepts
         int iC = 1;
@@ -178,14 +165,13 @@ transformed parameters {
         // Cumulative history parameters
         vector[randomN] tau_ind = expand_history_param_to_individuals(tau_option, fixed_tau, tau_mu, tau_sigma, tau_rnd, randomN, lfLog);
         vector[randomN] mixed_state_ind = expand_history_param_to_individuals(mixed_state_option, fixed_mixed_state, mixed_state_mu, mixed_state_sigma, mixed_state_rnd, randomN, lfLogit);
-        vector[randomN] history_mix_ind = expand_history_param_to_individuals(history_mix_option, fixed_history_mix, history_mix_mu, history_mix_sigma, history_mix_rnd, randomN, lfLogit);
         vector[randomN] bH_ind[lmN];
-        for(iP in 1:lmN) {
+        for(iLM in 1:lmN) {
             if (randomN == 1) {
-                bH_ind[iP] = rep_vector(bH_mu[iP], randomN);
+                bH_ind[iLM] = rep_vector(bH_mu[iLM], randomN);
             }
             else {
-                bH_ind[iP] = bH_mu[iP] + bH_sigma[iP] * bH_rnd[iP];
+                bH_ind[iLM] = bH_mu[iLM] + bH_sigma[iLM] * bH_rnd[iLM];
             }
         }
 
@@ -203,14 +189,13 @@ transformed parameters {
             // for valid percepts, we use history for parameter computation
             if (is_used[iT] == 1){
                 // history mixture
-                hmix = history_mix_ind[irandom[iT]] * current_history[istate[iT]] +
-                      (1 - history_mix_ind[irandom[iT]]) * current_history[3-istate[iT]];
+                dH = current_history[3-istate[iT]] - current_history[istate[iT]];
 
                 // computing lm for parameters
                 for(iLM in 1:lmN) {
-                    lm_param[iLM][iC] = a[iLM][irandom[iT]] + bH_ind[iLM][irandom[iT]] * hmix;
+                    lm_param[iLM][iC] = a[iLM][irandom[iT]] + bH_ind[iLM][irandom[iT]] * dH;
                     if (fixedN > 0) {
-                        lm_param[iLM][iC] += sum(bF[iLM] .* fixed_clear[iC]);
+                        lm_param[iLM][iC] += sum(bF[iLM] .* fixed[iT]);
                     }
                 }
 
@@ -251,19 +236,6 @@ model {
             mixed_state_rnd ~ normal(0, 1);
         }
     }
-    { // History mixture
-        if (history_mix_option == oSingle) {
-            history_mix_mu ~ normal(history_mix_prior[1], history_mix_prior[2]);
-        }
-        else if (history_mix_option == oIndependent) {
-            history_mix_rnd ~ normal(history_mix_prior[1], history_mix_prior[2]);
-        }
-        else if (history_mix_option == oPooled) {
-            history_mix_mu ~ normal(history_mix_prior[1], history_mix_prior[2]);
-            history_mix_sigma ~ exponential(10);
-            history_mix_rnd ~ normal(0, 1);
-        }
-    }
 
     // linear model parameters
     for(iLM in 1:lmN) {
@@ -289,7 +261,7 @@ model {
 
     // predicting clear durations
     if (family == lGamma) {
-        clear_duration ~ gamma(exp(lm_param[1]), exp(lm_param[2]));
+        clear_duration ~ gamma(exp(lm_param[1]), 1 ./ exp(lm_param[2]));
     } else if (family == lLogNormal) {
         clear_duration ~ lognormal(exp(lm_param[1]), sigma[1]);
     } else if (family == lNormal) {
@@ -300,7 +272,7 @@ generated quantities{
     vector[clearN] log_lik;
 
     if (family == lGamma) {
-        for(iC in 1:clearN) log_lik[iC] = gamma_lpdf(clear_duration[iC] | exp(lm_param[1][iC]), exp(lm_param[2][iC]));
+        for(iC in 1:clearN) log_lik[iC] = gamma_lpdf(clear_duration[iC] | exp(lm_param[1][iC]), 1 / exp(lm_param[2][iC]));
     } else if (family == lLogNormal) {
         for(iC in 1:clearN) log_lik[iC] = lognormal_lpdf(clear_duration[iC] | exp(lm_param[1][iC]), sigma[1]);
     } else if (family == lNormal) {

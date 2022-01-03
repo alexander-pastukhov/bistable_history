@@ -56,7 +56,7 @@ fixef <- function(object, summary=TRUE, probs=c(0.055, 0.945)){
     # adding fixed term names
     dplyr::mutate(Term = factor(.data$Term,
                                 levels = 1:dim(bF)[3],
-                                labels = colnames(object$data$fixed_clear))) %>%
+                                labels = colnames(object$data$fixed))) %>%
 
     # adding distribution parameter names
     dplyr::mutate(DistributionParameter = factor(.data$DistributionParameter,

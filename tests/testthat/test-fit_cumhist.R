@@ -18,16 +18,11 @@ test_that("test the fit_cumhist fails", {
   expect_error(fit_cumhist(br_singleblock, state="State", duration="Duration", tau = "RANDOM", chains = 0))
 
   # should fail because of bad history_mix parameter
-  expect_error(fit_cumhist(br_singleblock, state="State", duration="Duration", history_mix = -1, chains = 0))
-  expect_error(fit_cumhist(br_singleblock, state="State", duration="Duration", history_mix = 2, chains = 0))
-  expect_error(fit_cumhist(br_singleblock, state="State", duration="Duration", history_mix = c(0.5, 0.5), chains = 0))
-  expect_error(fit_cumhist(br_singleblock, state="State", duration="Duration", history_mix = "RANDOM", chains = 0))
-
-  # should fail because of bad mixed_state parameter
   expect_error(fit_cumhist(br_singleblock, state="State", duration="Duration", mixed_state = -1, chains = 0))
   expect_error(fit_cumhist(br_singleblock, state="State", duration="Duration", mixed_state = 2, chains = 0))
   expect_error(fit_cumhist(br_singleblock, state="State", duration="Duration", mixed_state = c(0.5, 0.5), chains = 0))
   expect_error(fit_cumhist(br_singleblock, state="State", duration="Duration", mixed_state = "RANDOM", chains = 0))
+
 
   # should fail because of bad history_init values
   expect_error(fit_cumhist(br_singleblock, state="State", duration="Duration", history_init = -1, chains = 0))
