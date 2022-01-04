@@ -33,7 +33,6 @@ Analysis of time series from psychophysical experiments on perceptual experiment
 Package `bistablehistory` addresses this problem by providing tools that allow to compute an estimate of this process while, optionally, fit its parameters. The estimate could be used for further analysis or directly as part of a statistical (generalized) linear model that is fitted by a package function.
 
 # Cumulative history computation
-
 The cumulative history for a perceptual state is computed via a homogeneous first order process (for details on first order linear differential equations please refer to chapter 2 in @Wilson1999):
 $$\tag{1}\frac{dh_i}{dt} = \frac{1}{\tau} (-h_i + S_i(t))$$
 
@@ -85,7 +84,7 @@ gamma_fit <- fit_cumhist(br_singleblock,
                         onset="Time")
 ```
 
-Now you can look at the fitted value for history time constant using `history_tau()`
+Now one can look at the fitted value for history time constant using `history_tau()`
 ```r
 history_tau(gamma_fit)
 ```
@@ -94,9 +93,56 @@ main effect of history for both parameters of gamma distribution
 ```r
 historyef(gamma_fit)
 ```
-or extract an estimate of perceptual history / adaptation via `extract_history()` function.
+extract an estimate of perceptual history / adaptation via `extract_history()` function
 ```r
 H <- extract_history(gam_fit)
+```
+or compute an expected duration for each dominance phase via `predict()`
+
+```r
+br_singleblock$Predicted <- predict(gam_fit)
+```
+
+The package allows to extend the analysis to multiple experimental runs (via `run` argument that specifies a variable that identifies individual runs), experimental session (via `session` argument) that are assumed to have different average dominance phase durations [@Suzuki2007], 
+to multiple participants (via `random_effect` argument). It also allows to incorporate fixed effects, although they are restricted to continuous metric variables (see a vignette on reusing model code directly in Stan for overcoming these limitations). 
+
+The example below demonstrates an analysis for many observers (`random_effect = "Observer"`) who performed multple runs (`run = "Block"`) taking into account when the dominance phase occurred (`fixed_effects = "LogTime"`). It also uses custom prior for tau parameter and custom control parameters for Stan sampler. For details on these and other settings please refer to "Usage Examples" vignette.
+```r
+library(bistablehistory)
+library(tidyverse)
+
+data(kde)
+kde$LogTime <- log(kde$Time)
+kde_fit <- fit_cumhist(kde,
+                       state = "State",
+                       duration = "Duration",
+                       random_effect = "Observer",
+                       fixed_effects = "LogTime",
+                       run = "Block",
+                       tau = "1|random",
+                       history_priors = list("tau"=c(log(0.5), 0.3)),
+                       chains = 4,
+                       control = list(max_treedepth = 15,
+                                      adapt_delta = 0.99))
+
+```
+
+Models fits can be compared via information criteria. Specifically, the log likelihood is stored in a `log_lik` parameter that can be directly using `loo::extract_log_lik()` function (see package [@@loo]) or used to compute either a leave-one-out cross-validation (via `loo()` convinience function) or WAIC (via `waic()`). These are information criteria that can be used for model comparison the same way as Akaike (AIC), Bayesian (BIC), or deviance (DIC) information criteria. The latter can also be computed from log likehood, however, WAIC and LOOCV are both preferred for multi-level models, see [@loo]. The model comparison itself can be performed via `loo::loo_compare()` function of the `loo` package.
+
+```r
+library(loo)
+fit1 <- fit_cumhist(br_singleblock,
+                    state="State",
+                    onset="Time")
+                        
+br_singleblock$LogTime <- log(br_singleblock$Time)
+fit2 <- fit_cumhist(br_singleblock,
+                    state="State",
+                    onset="Time",
+                    fixed_effects = "LogTime")
+                    
+loo::loo_compare(list("null" = loo(fit1),
+                      "+logTime" = loo(fit2)))
 ```
 
 A package vignette provide details on including random and fixed factors, as well as on use of cumulative history computation parameters.  

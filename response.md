@@ -9,6 +9,7 @@ in your vignette, $A$ and $t^prime$, for example, are not defined.
 > Yes, thank you! I have included the new section on that (effectively, a large chunk of the corresponding vignette).
 
 line 26/27: "thus it provides .... ability to compare models via information criteria, etc", this sounds vague to me as frequentist likelihood inference can also do model comparisons using information criteria (e.g., AIC) so maybe better to say explicitly you are referring here WAIC and/or DIC.
+> Yes, model comparison via IC is not uniquely Bayesian! I have expanded on both the technical details and added a reference on why LOOCV and WAIC are preferred for multilevel models. 
 
 
 Is there any current R packages or any other software packages for history-dependent analysis? if so, it would be good to cite.
