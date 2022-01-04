@@ -158,8 +158,7 @@ $$Duration[i] \sim Normal(\mu[i], \sigma)$$
 The $\mu$ parameter is computed via a linear model. Priors for the intercept are $\alpha ~ Normal(3, 5)$. Prior for $\sigma$ was $\sigma \sim Exponential(1)$.
 
 ## Model comparison
-Models fits can be compared via information criteria. Specifically, the log likelihood is stored in a `log_lik` parameter that can be directly using `loo::extract_log_lik()` function (see package [@@loo]) or used to compute either a leave-one-out cross-validation (via `loo()` convinience function) or WAIC (via `waic()`). These are information criteria that can be used for model comparison the same way as Akaike (AIC), Bayesian (BIC), or deviance (DIC) information criteria. The latter can also be computed from log likehood, however, WAIC and LOOCV are both preferred for multi-level models, see [@Vehtari2017]. The model comparison itself can be performed via 
-`loo::loo_compare()` function of the `loo` package.
+Models fits can be compared via information criteria. Specifically, the log likelihood is stored in a `log_lik` parameter that can be directly using `loo::extract_log_lik()` function (see package [@@loo]) or used to compute either a leave-one-out cross-validation (via `loo()` convinience function) or WAIC (via `waic()`). These are information criteria that can be used for model comparison the same way as Akaike (AIC), Bayesian (BIC), or deviance (DIC) information criteria. The latter can also be computed from log likehood, however, WAIC and LOOCV are both preferred for multi-level models, see [@Vehtari2017]. The model comparison itself can be performed via `loo::loo_compare()` function of the `loo` package.
 
 ## Computing and using cumulative history
 If you are interested in the cumulative history itself, you can extract from the fitted object via `extract_history()` function
