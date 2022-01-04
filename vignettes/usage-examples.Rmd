@@ -58,6 +58,18 @@ log(rate[i]) = \alpha^{rate} + \beta^{rate}_H \cdot \Delta h[i] \\
 \beta^{shape}_H, \beta^{rate}_H \sim Normal(0, 1) \\
 \tau \sim Normal(log(1), 0.15)$$
 
+## Passing Stan control parameters
+You can pass Stan control parameters via `control` argument, e.g.,
+```{r eval=FALSE}
+gamma_fit <- fit_cumhist(br_singleblock,
+                        state="State",
+                        duration="Duration",
+                        control=list(max_treedepth = 15,
+                                     adapt_delta = 0.99))
+```
+
+See Stan documentation for details [@Carpenter2017].
+
 ## Run
 By default, `fit_cumhist()` function assumes that the time-series represent a single run, so that history states are initialized only once at the very beginning. You can use `run` argument to pass the name of a column that specifies individual runs. In this case, history is initialized at the beginning of every run to avoid spill-over effects.
 
