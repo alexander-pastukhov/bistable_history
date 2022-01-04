@@ -45,10 +45,10 @@ functions {
 }
 data{
     // --- Family choice ---
-    int<lower=1, upper=3> family;
     // 1 - Gamma, linear model for both shape and rate
     // 2 - Log normal with linear model for the mean
     // 3 - Normal with linear model for the mean
+    int<lower=1, upper=3> family;
 
     // --- Complete time-series ---
     int<lower=1> rowsN;   // Number of rows in the COMPLETE multi-timeseries table including mixed phase.
