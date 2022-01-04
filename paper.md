@@ -94,7 +94,7 @@ main effect of history for both parameters of gamma distribution
 ```r
 historyef(gamma_fit)
 ```
-or exract an estimate of perceptual history / adaptation via `extract_history()` function.
+or extract an estimate of perceptual history / adaptation via `extract_history()` function.
 ```r
 H <- extract_history(gam_fit)
 ```
