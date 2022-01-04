@@ -145,6 +145,9 @@ The $\mu$ parameter is computed via a linear model with a log link function. Pri
 $$Duration[i] \sim Normal(\mu[i], \sigma)$$
 The $\mu$ parameter is computed via a linear model. Priors for the intercept are $\alpha ~ Normal(3, 5)$. Prior for $\sigma$ was $\sigma \sim Exponential(1)$.
 
+## Model comparison
+Models can be compared via `loo::loo_compare()` function of the `loo` package based on either a leave-one-out cross-validation `loo()` or WAIC `waic()` information criteria. Please refer to [@Vehtari2017] for method details.
+
 ## Computing and using cumulative history
 If you are interested in the cumulative history itself, you can extract from the fitted object via `extract_history()` function
 ```{r eval=FALSE}
