@@ -44,8 +44,8 @@ test_that("evaluate_history_option fails", {
 
   # supplied value outside of valid range
   expect_error(evaluate_history_option("tau", -0.5, 1, Inf))
-  expect_error(evaluate_history_option("history_mix", -0.5, 1, 1))
-  expect_error(evaluate_history_option("history_mix", 1.1, 1, 1))
+  expect_error(evaluate_history_option("mixed_state", -0.5, 1, 1))
+  expect_error(evaluate_history_option("mixed_state", 1.1, 1, 1))
 })
 
 
