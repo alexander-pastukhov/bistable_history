@@ -59,7 +59,7 @@ $$\tag{6} h_i(\Delta t) = S + (h_i(0) - S)  \cdot e^{-\Delta t/\tau}$$
 
 The figure below shows accumulation over time for three different initial values ($x(0)$), signal strength ($S$), and and time constants ($tau$). Note that the package allows to either specify and fit both the time constant (argument `tau` in `fit_cumhist()` function) and the initial history value at the block (`history_init` argument).
 
-![**Figure 2. Perception of Necker cube stimulus.** A) Necker cube. B) Schematic time series of perceptual alternations. C) Example distribution of perceptual dominance phases' duration fitting with Gamma distribution. \label{fig:fig1}](fig1.png){width=80%}
+![**Figure 2. Examples of cumulative history for diffierent initial conditions, signal strength, and time constants.** \label{fig:fig2}](fig2.png){width=100%}
 
 
 As for a bistable case there are two history states (one for each perceptual state), we compute a history as a difference of cumulative histories
