@@ -15,7 +15,6 @@ fit_cumhist(
   fixed_effects = NULL,
   tau = NULL,
   mixed_state = 0.5,
-  history_mix = 0.2,
   history_init = 0,
   family = "gamma",
   history_priors = NULL,
@@ -86,16 +85,6 @@ of two numbers \code{c(mu, kappa)} that specifies, correspondingly, mean
 (range 0..1) and precision (>0) of beta proportion distribution, it
 should be sampled from. Defaults to a fixed value of \code{0.5}.}
 
-\item{history_mix}{Specifies how cumulative history levels for
-the same and opposite perceptual states are combined when used to
-predict dominance phase durations, so that \code{history = history_mix
-* history_same + (1 - history_mix) * history_opposite}. Either a single
-number (range 0..1) that will be used as a fixed level or a vector
-of two numbers \code{c(mu, kappa)} that specifies, correspondingly, mean
-(range 0..1) and precision (>0) of beta proportion distribution, it
-should be sampled from. Defaults to a fixed value of \code{0}
-(predictions are made using cumulative history for the opposite state).}
-
 \item{history_init}{Initial value for cumulative history computation. Either
 a numeric scalar in 0..1 range or a vector of two numbers in 0..1 range.
 In the latter case, two histories will start at different levels.}
@@ -117,8 +106,8 @@ of history effect. The values code mean and standard deviation of the normal dis
 Defaults to mu=0, sigma=1.}
 
 \item{fixed_effects_priors}{A named list of optional priors for fixed effects. Must
-follow the format \code{list("<name-of-variable"=c(<mu>, <sigma>))}, where <mu> and
-<sigma> are mean and standard deviation of a normal distribution. Defaults to mu=0,
+follow the format \code{list("<name-of-variable>"=c(<mu>, <sigma>))}, where \code{<mu>} and
+\code{<sigma>} are mean and standard deviation of a normal distribution. Defaults to mu=0,
 sigma=1.}
 
 \item{chains}{Number of chains for sampling.}
@@ -137,6 +126,6 @@ specified fixed effects.
 \examples{
 \donttest{
 data(br_singleblock)
-gamma_fit <- fit_cumhist(br_singleblock, state="State", duration="Duration")
+gamma_fit <- fit_cumhist(br_singleblock, state = "State", duration = "Duration")
 }
 }

@@ -15,8 +15,7 @@ history_parameter(
 \arguments{
 \item{object}{An object of class \link[=cumhist-class]{cumhist}}
 
-\item{param}{Paramtere name: \code{"tau"}, \code{"mixed_state"},
-or \code{"history_mix"}.}
+\item{param}{Paramtere name: \code{"tau"} or \code{"mixed_state"}}
 
 \item{summary}{Whether summary statistics should be returned instead of
 raw sample values. Defaults to \code{TRUE}}
