@@ -39,16 +39,14 @@
 predict.cumhist <-  function(object, summary = TRUE, probs = NULL, full_length = TRUE, ...) {
   if (is.null(object$stanfit)) stop("The object has no fitted stan model")
 
-    # extracting parameters
+  # extracting parameters
   lm_params <- rstan::extract(object$stanfit, pars="lm_param")$lm_param
 
   if (object$family == "gamma") {
     predictions <- exp(lm_params[, 1, ]) * exp(lm_params[, 2, ])
-  }
-  else if (object$family == "lognormal") {
+  } else if (object$family == "lognormal") {
     predictions <- exp(exp(lm_params[, 1, ]) + lm_params[, 2, ] / 2)
-  }
-  else if (object$family == "normal") {
+  } else if (object$family == "normal") {
     predictions <- lm_params[, 1, ]
   }
 
@@ -78,14 +76,15 @@ predict.cumhist <-  function(object, summary = TRUE, probs = NULL, full_length =
   }
 
   full_length_predictions <-
-    tibble(is_used = gamma_fit$data$is_used) %>%
-    group_by(is_used) %>%
+    tibble(is_used = object$data$is_used) %>%
+    group_by(.data$is_used) %>%
     mutate(id = row_number()) %>%
     ungroup() %>%
-    mutate(id = ifelse(is_used, id, NA)) %>%
-    left_join(predictions_summary %>% mutate(id = row_number()),
+    mutate(id = ifelse(.data$is_used, .data$id, NA)) %>%
+    left_join(predictions_summary %>%
+                mutate(id = row_number()),
               by = "id") %>%
-    select(-is_used, -id)
+    select(-c("is_used", "id"))
 
   if (is.null(probs)) {
     return(full_length_predictions$Predicted)
