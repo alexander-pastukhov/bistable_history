@@ -1,4 +1,4 @@
-#' Prints out cumhit object
+#' Prints out cumhist object
 #'
 #' @param x A [cumhist][cumhist-class()] object
 #' @param ... Unused

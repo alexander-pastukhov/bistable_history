@@ -66,7 +66,7 @@ session B, runs 1, 2, 3 but not session A, runs 1, 2, 1.}
 
 \item{fixed_effects}{String or vector of strings. Name of column(s)
 with values to be used for fitting an additional fixed effect(s). E.g.,
-contrast in binocular rivalry, rotation speed for kinectic-depth effect,
+contrast in binocular rivalry, rotation speed for kinetic-depth effect,
 etc.}
 
 \item{tau}{Time constant of exponential growth/decay

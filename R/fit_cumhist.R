@@ -25,7 +25,7 @@
 #' in a hierarchical model.
 #' @param fixed_effects String or vector of strings. Name of column(s)
 #' with values to be used for fitting an additional fixed effect(s). E.g.,
-#' contrast in binocular rivalry, rotation speed for kinectic-depth effect,
+#' contrast in binocular rivalry, rotation speed for kinetic-depth effect,
 #' etc.
 #' @param session String, name of the column that identifies unique
 #' experimental session for which a mean dominance phase duration will

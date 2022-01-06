@@ -46,7 +46,7 @@ where $\tau$ is the time constant, $h_i$ is cumulative history and $S_i(t)$ is c
 $$\tag{2}
 S(t) = \begin{cases}
   1 & \text{if state $i$ is dominant}\\
-  0 & \text{if state $i$ is suppessed}\\
+  0 & \text{if state $i$ is suppressed}\\
   S_{mixed} & \text{if it is a mixed/transition phase and $0 ≥ S_{mixed} ≥1 $}
 \end{cases}$$
 

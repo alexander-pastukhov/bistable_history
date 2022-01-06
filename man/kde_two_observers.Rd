@@ -3,7 +3,7 @@
 \docType{data}
 \name{kde_two_observers}
 \alias{kde_two_observers}
-\title{Multirun data for two participants, kinectic-depth effect display}
+\title{Multirun data for two participants, kinetic-depth effect display}
 \format{
 A data frame with 1186 rows and 5 variables:
 \describe{
@@ -21,6 +21,6 @@ A data frame with 1186 rows and 5 variables:
 kde_two_observers
 }
 \description{
-Multirun data for two participants, kinectic-depth effect display
+Multirun data for two participants, kinetic-depth effect display
 }
 \keyword{datasets}

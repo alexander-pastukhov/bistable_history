@@ -31,7 +31,7 @@
 "br_single_subject"
 
 
-#' Multirun data for two participants, kinectic-depth effect display
+#' Multirun data for two participants, kinetic-depth effect display
 #'
 #' @format A data frame with 1186 rows and 5 variables:
 #' \describe{

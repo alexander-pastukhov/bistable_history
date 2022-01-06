@@ -1,7 +1,7 @@
 #' Extract values of used or fitted history parameter
 #'
 #' @param object An object of class [cumhist][cumhist-class()]
-#' @param param Paramtere name: \code{"tau"} or \code{"mixed_state"}
+#' @param param Parameter name: \code{"tau"} or \code{"mixed_state"}
 #' @param summary Whether summary statistics should be returned instead of
 #' raw sample values. Defaults to \code{TRUE}
 #' @param probs The percentiles used to compute summary, defaults to 89% credible interval.
