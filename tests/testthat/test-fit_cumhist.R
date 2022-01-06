@@ -39,4 +39,10 @@ test_that("test the fit_cumhist fails", {
   expect_error(fit_cumhist(br_singleblock, state="State", duration="Duration", intercept_priors = list(c(1, 1)), chains = 0))
   expect_error(fit_cumhist(br_singleblock, state="State", duration="Duration", intercept_priors = c(1, 1), chains = 0))
   expect_error(fit_cumhist(br_singleblock, state="State", duration="Duration", intercept_priors = c(1, 1, 1, 1), family = "normal", chains = 0))
+
+  # should fail because of bad fixed_effects
+  expect_error(fit_cumhist(br_singleblock, state="State", duration="Duration", fixed_effects = "LogTime", chains = 0))
+
+  # should fail because of bad random_effect
+  expect_error(fit_cumhist(br_singleblock, state="State", duration="Duration", random_effect = "Participant", chains = 0))
 })
