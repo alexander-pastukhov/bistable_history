@@ -9,7 +9,7 @@
 #'
 #' @examples
 #' \donttest{
-#' br_fit <- fit_cumhist(br_singleblock, state="State", duration="Duration", fixed="Time")
+#' br_fit <- fit_cumhist(br_singleblock, state="State", duration="Duration")
 #' summary(br_fit)
 #' }
 
@@ -23,7 +23,6 @@ summary.cumhist <- function(object, ...){
   cat("History parameters:\n")
   cat(glue::glue("    tau = {round(history_tau(object)$Estimate, 2)}\n\n"))
   cat(glue::glue("    mixed state = {round(history_mixed_state(object)$Estimate, 2)}\n\n"))
-  cat(glue::glue("    history mix = {round(history_mix(object)$Estimate, 2)}\n\n"))
 
   cat("\nLinear model:\n")
   print(coef(object))
