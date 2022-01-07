@@ -15,11 +15,12 @@ fit_cumhist(
   fixed_effects = NULL,
   tau = NULL,
   mixed_state = 0.5,
-  history_mix = 0.2,
   history_init = 0,
   family = "gamma",
   history_priors = NULL,
   intercept_priors = NULL,
+  history_effect_prior = NULL,
+  fixed_effects_priors = NULL,
   chains = 1,
   cores = NULL,
   ...
@@ -44,9 +45,9 @@ dominance states. Optional, used to compute duration of the dominance
 phases, if these are not provided explicitly via \code{duration}
 parameter.}
 
-\item{random_effect}{String, name of the column that identifies random effect,
-e.g. individual participants, stimuli for a single participant, etc.
-If omitted, no random effect is assumed. If specified and
+\item{random_effect}{String, name of the column that identifies random
+effect, e.g. individual participants, stimuli for a single participant,
+etc. If omitted, no random effect is assumed. If specified and
 there is more than one level (participant, stimulus, etc.), it is used
 in a hierarchical model.}
 
@@ -65,7 +66,7 @@ session B, runs 1, 2, 3 but not session A, runs 1, 2, 1.}
 
 \item{fixed_effects}{String or vector of strings. Name of column(s)
 with values to be used for fitting an additional fixed effect(s). E.g.,
-contrast in binocular rivalry, rotation speed for kinectic-depth effect,
+contrast in binocular rivalry, rotation speed for kinetic-depth effect,
 etc.}
 
 \item{tau}{Time constant of exponential growth/decay
@@ -84,16 +85,6 @@ of two numbers \code{c(mu, kappa)} that specifies, correspondingly, mean
 (range 0..1) and precision (>0) of beta proportion distribution, it
 should be sampled from. Defaults to a fixed value of \code{0.5}.}
 
-\item{history_mix}{Specifies how cumulative history levels for
-the same and opposite perceptual states are combined when used to
-predict dominance phase durations, so that \code{history = history_mix
-* history_same + (1 - history_mix) * history_opposite}. Either a single
-number (range 0..1) that will be used as a fixed level or a vector
-of two numbers \code{c(mu, kappa)} that specifies, correspondingly, mean
-(range 0..1) and precision (>0) of beta proportion distribution, it
-should be sampled from. Defaults to a fixed value of \code{0}
-(predictions are made using cumulative history for the opposite state).}
-
 \item{history_init}{Initial value for cumulative history computation. Either
 a numeric scalar in 0..1 range or a vector of two numbers in 0..1 range.
 In the latter case, two histories will start at different levels.}
@@ -106,7 +97,18 @@ parameters. Must follow the format \code{list("tau"=c(1, 0.15))} with values cod
 and standard deviation of the normal distribution.}
 
 \item{intercept_priors}{A vector of optional priors for population-level intercept
-parameter. Should be \code{c(<shape-mean>, <shape-sd>, <scale-mean>, <scale-sd>)}}
+parameter. Should be \code{c(<shape-mean>, <shape-sd>, <scale-mean>, <scale-sd>)}
+format for Gamma family, \code{c(<mean>, <sd>)} for normal and lognormal families.
+The values code mean and standard deviation of the normal distribution.}
+
+\item{history_effect_prior}{A vector of options priors for population-level slope
+of history effect. The values code mean and standard deviation of the normal distribution.
+Defaults to mu=0, sigma=1.}
+
+\item{fixed_effects_priors}{A named list of optional priors for fixed effects. Must
+follow the format \code{list("<name-of-variable>"=c(<mu>, <sigma>))}, where \code{<mu>} and
+\code{<sigma>} are mean and standard deviation of a normal distribution. Defaults to mu=0,
+sigma=1.}
 
 \item{chains}{Number of chains for sampling.}
 
@@ -124,6 +126,6 @@ specified fixed effects.
 \examples{
 \donttest{
 data(br_singleblock)
-gamma_fit <- fit_cumhist(br_singleblock, state="State", duration="Duration")
+gamma_fit <- fit_cumhist(br_singleblock, state = "State", duration = "Duration")
 }
 }

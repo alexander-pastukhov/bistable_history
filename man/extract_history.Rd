@@ -19,7 +19,7 @@ if \code{"random"} or \code{"1|random"} parametrisation was used.
 }
 \examples{
 \donttest{
-br_fit <- fit_cumhist(br_singleblock, state="State", duration="Duration")
+br_fit <- fit_cumhist(br_singleblock, state = "State", duration = "Duration")
 extract_history(br_fit)
 }
 }

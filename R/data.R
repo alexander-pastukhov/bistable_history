@@ -31,7 +31,7 @@
 "br_single_subject"
 
 
-#' Multirun data for two participants, kinectic-depth effect display
+#' Multirun data for two participants, kinetic-depth effect display
 #'
 #' @format A data frame with 1186 rows and 5 variables:
 #' \describe{
@@ -107,3 +107,33 @@
 #'   \item{Duration}{Duration of a dominance phase in _seconds_. Note that the duration for the last dominance phase is curtailed and, therefore, set to zero.}
 #' }
 "br_contrast"
+
+
+#' Gamma fit for br_singleblock data
+#'
+#' Gamma fit for \link{br_singleblock} data using all defaults.
+#'
+#' The call:
+#' \code{br_singleblock_gamma_fit <-
+#'         fit_cumhist(br_singleblock,
+#'                     state = "State",
+#'                     duration = "Duration")}
+#' @format An object of class [cumhist][cumhist-class()]
+#' @seealso [fit_cumhist()]
+"br_singleblock_gamma_fit"
+
+#' Gamma fit for br_singleblock data with log(Time) as fixed factor
+#'
+#' Gamma fit for \link{br_singleblock} data with log(Time) as fixed
+#' factor using all defaults.
+#'
+#' The call:
+#' \code{br_singleblock$LogTime <- log(br_singleblock$Time) \cr
+#'       br_singleblock_gamma_time_fit <-
+#'         fit_cumhist(br_singleblock,
+#'                     state = "State",
+#'                     duration = "Duration",
+#'                     fixed_effects = "LogTime")}
+#' @format An object of class [cumhist][cumhist-class()]
+#' @seealso [fit_cumhist()]
+"br_singleblock_gamma_time_fit"

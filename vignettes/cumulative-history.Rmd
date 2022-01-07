@@ -3,6 +3,7 @@ title: "Cumulative History"
 author: "Alexander (Sasha) Pastukhov"
 date: "`r Sys.Date()`"
 output: rmarkdown::html_vignette
+bibliography: cumulative-history.bib  
 vignette: >
   %\VignetteIndexEntry{Cumulative History}
   %\VignetteEngine{knitr::rmarkdown}
@@ -34,59 +35,61 @@ A distribution of these so-called dominance phases typically has a right-skewed 
 knitr::include_graphics("gamma-distribution.png")
 ```
 
-However, the individual dominance phases show a subtle but consistent serial dependence, see, for example, [van Ee (2009)](https://doi.org/10.1364/JOSAA.26.002612). This serial dependence is thought to reflect accumulation of slow adaptation [(Pastukhov et.al., 2013)](https://doi.org/10.3389/fncom.2013.00017) or prediction error [(Weilnhammer et al., 2017)[https://doi.org/10.1371/journal.pcbi.1005536] for the dominant percept. This slow accumulation process can be described via a homogeneous first order process. A brief summary on the formula and examples of accumulation over time for different initial values, signal strength, and time constants are presented below. For further details, please refer to [(Pastukhov & Braun, 2011)](https://doi.org/10.1167/11.10.12).
+However, the individual dominance phases show a subtle but consistent serial dependence, see, for example, [@VanEe2009]. This serial dependence is thought to reflect accumulation of slow adaptation [@Pastukhov2013] or prediction error [@Weilnhammer2017] for the dominant percept. This slow accumulation process can be described via a homogeneous first order process. A brief summary on the formula and examples of accumulation over time for different initial values, signal strength, and time constants are presented below. For further details, please refer to [@PastukhovBraun2011].
 
 ---
 
-The cumulative history for a perceptual state computed via a homogeneous first order process:
-$$\frac{dx_i}{dt} = \frac{1}{\tau} (-x_i + S_i(t))$$
+The cumulative history for a perceptual state is computed via a homogeneous first order process (for details on first order linear differential equations please refer to chapter 2 in @Wilson1999):
+$$\tag{1}\frac{dh_i}{dt} = \frac{1}{\tau} (-h_i + S_i(t))$$
 
-where $\tau$ is the time constant, $x_i$ is cumulative history and $S_i(t)$ is current signal level for the state _i_, so that
-$$S(t) = \begin{cases}
+where $\tau$ is the time constant, $h_i$ is cumulative history and $S_i(t)$ is current signal level for for the i<sup>th</sup> perceptual state, so that
+$$\tag{2}
+S(t) = \begin{cases}
   1 & \text{if state $i$ is dominant}\\
-  0 & \text{if state $i$ is suppessed}\\
+  0 & \text{if state $i$ is suppressed}\\
   S_{mixed} & \text{if it is a mixed/transition phase and $0 ≥ S_{mixed} ≥1 $}
 \end{cases}$$
 
-The general solution for the equation is
+where $S_{mixed}$ corresponds to the `mixed_state` parameter that can be either specified (the `fit_cumhist()` function uses a default of `0.5`) or fitted. The general solution for the equation (see Theorem 1 in @Wilson1999, chapter 2, page 15) is
 
-$$
-x_i(t) = A e^{-t/\tau} + \frac{1}{\tau} \int_{0}^{t} e^{-(t'-t)/\tau} S(t') dt'
-$$
+$$\tag{3}h_i(t) = A e^{-t/\tau} + \frac{1}{\tau} \int_{0}^{t} e^{-(t'-t)/\tau} S(t') dt'$$
 
-Assuming a constant signal $S$, we obtain
-$$
-x_i(t) = A e^{-t/\tau} + S (1 - e^{-t/\tau})
-$$
+where $A$ is chosen to satisfy the initial condition. Assuming a constant signal $S$, we obtain
+$$\tag{4}h_i(t) = A e^{-t/\tau} + S_i \cdot (1 - e^{-t/\tau})$$
 
-In our case, we are interested in change of cumulative history during a particular dominance phase that start at time $t$ and end at time $t + \Delta t$. Solving for initial condition $x_i(t)$ and $S$:
-$$x_i(t + \Delta t) = x_i(t) + (S - x_i(t)) \cdot (1 - e^{-\Delta t/\tau})\\
-x_i(t + \Delta t) = S + (x_i(t) - S)  \cdot e^{-\Delta t/\tau}$$
+For the cumulative history, we are interested in $h_i(t + \Delta t)$: a change following a dominance phase that starts at time $t$, ends at time $t + \Delta t$, and has a constant signal strength $S_i$. Assuming that a dominance phase starts at $t=0$ and substituting into the equation 4, $h_i(0) = A$. In other words, constant $A$ is equal to cumulative history state before the dominance phase onset and, therefore, the relative signal strength during the dominance phase is determined by the difference between the signal strength and the initial cumulative history value: $S_i - h_i(0)$. Thus
+$$\tag{5} h_i(\Delta t) = h_i(0) + (S - h_i(0)) \cdot (1 - e^{-\Delta t/\tau})$$
+$$\tag{6} h_i(\Delta t) = S + (h_i(0) - S)  \cdot e^{-\Delta t/\tau}$$
 
 
 The figure below shows accumulation over time for three different initial values ($x(0)$), signal strength ($S$), and and time constants ($tau$). Note that the package allows to either specify and fit both the time constant (argument `tau` in `fit_cumhist()` function) and the initial history value at the block (`history_init` argument).
+
 ```{r  fig.width=8, fig.height=4, out.width="80%", fig.align='center'}
 t <- seq(0, 20, length.out=100)
 df <- 
-  data.frame(x0 = c(0, 0.7, 0.9), S = c(1, 0, 0.5), tau = c(1, 4, 2)) %>%
-  group_by(x0, S, tau) %>%
-  summarise(x0 = x0[1],
+  data.frame(h0 = c(0, 0.7, 0.9), S = c(1, 0, 0.5), tau = c(1, 4, 2)) %>%
+  group_by(h0, S, tau) %>%
+  summarise(h0 = h0[1],
             S = S[1],
             tau = tau[1],
             t = t,
-            x = S + (x0 - S) * exp(-t / tau),
-            Parameters = sprintf("x(0) = %.1f, S = %.1f, tau = %d", x0[1], S[1], tau[1]),
+            h = S + (h0 - S) * exp(-t / tau),
+            Parameters = sprintf("h(0) = %.1f, S = %.1f, tau = %d", h0[1], S[1], tau[1]),
             .groups="keep")
 
-ggplot(df, aes(x=t, y=x, color=Parameters)) + 
+ggplot(df, aes(x=t, y=h, color=Parameters)) + 
   geom_line() + 
   xlab("dt [s]") +
-  ylab("x(t + dt)") + 
+  ylab("h(t + Δt)") + 
   ylim(0, 1) + 
   theme(legend.position="top")
 ```
 
-As for a bistable case there are two history states (one for each perceptual state), we compute a history "mixture" as 
-$$H_{mix} = \text{history_mix} \cdot H_{dominant} + (1-\text{history_mix}) \cdot H_{suppressed}$$
-where `history_mix` is a parameter that is either specified (the `fit_cumhist()` function uses a default of `0.2`) or fitted, whereas $H_{dominant}$ and $H_{suppressed}$ are history states for the currently dominant and suppressed states, respectively. _E.g._, if a left eye dominates during following phase, $H_{dominant} = H_{left}$ and $H_{suppressed} = H_{right}$ and vice versa.
+As for a bistable case there are two history states (one for each perceptual state), we compute a history as a difference of cumulative histories
+$$\tag{7}\Delta h(t, \tau) = h_{suppressed}(t, \tau) - h_{dominant}(t, \tau) $$
+where $h_{dominant}$ and $h_{suppressed}$ are history states for the currently dominant and suppressed states, respectively. _E.g._, if a left eye dominates during following phase, $h_{dominant} = h_{left}$ and $h_{suppressed} = h_{right}$ and vice versa.
+
+## References
+
+<div id="refs"></div>
 

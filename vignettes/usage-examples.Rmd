@@ -1,6 +1,7 @@
 ---
 title: "Usage examples"
 output: rmarkdown::html_vignette
+bibliography: usage-examples.bib  
 vignette: >
   %\VignetteIndexEntry{Usage examples}
   %\VignetteEngine{knitr::rmarkdown}
@@ -10,21 +11,19 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
+  warning = FALSE,
+  message = FALSE,
   comment = "#>"
 )
 ```
 
-```{r setup}
-knitr::opts_chunk$set(warning = FALSE, message = FALSE)
-library(bistablehistory)
-```
-
-
 ## Minimal example
 
-The main function is `fit_cumhist()` that takes a data frame with time-series as a first argument. In addition, you need to specify the name of the column that codes the perceptual state (`state` argument) and a column that holds either dominance phase duration (`duration`) or its onset (`onset`). The code below fits data using Gamma distribution (default family) for a single run of a single participant. By default, the function fits cumulative history time constant but uses default fixed mixed state value (`mixed_state = 0.5`), history mixing proportion (`history_mix = 0.2`), and initial history values (`history_init = 0`).
+The main function is `fit_cumhist()` that takes a data frame with time-series as a first argument. In addition, you need to specify the name of the column that codes the perceptual state (`state` argument) and a column that holds either dominance phase duration (`duration`) or its onset (`onset`). The code below fits data using Gamma distribution (default family) for a single run of a single participant. By default, the function fits cumulative history time constant but uses default fixed mixed state value (`mixed_state = 0.5`) and initial history values (`history_init = 0`).
 
-```{r minimal example duration}
+```{r minimal example duration, warning = FALSE, message = FALSE}
+library(bistablehistory)
+
 data(br_singleblock)
 gamma_fit <- fit_cumhist(br_singleblock,
                         state="State",
@@ -39,7 +38,7 @@ gamma_fit <- fit_cumhist(br_singleblock,
                         onset="Time")
 ```
 
-Now you can look at the fitted value for history time constant using `history_tau()`
+You can look at the fitted value for history time constant using `history_tau()`
 ```{r}
 history_tau(gamma_fit)
 ```
@@ -52,15 +51,27 @@ historyef(gamma_fit)
 
 The following model is fitted for the example above, see also [companion vignette](cumulative-history.html) for details on cumulative history computation.
 $$Duration[i] \sim  Gamma(shape[i], rate[i]) \\
-log(shape[i]) = \alpha^{shape} + \beta^{shape}_H \cdot H_{mix}[i] \\
-log(rate[i]) = \alpha^{rate} + \beta^{rate}_H \cdot H_{mix}[i] \\
-H_{mix}[i] = \text{cumulative_history}(\tau,\text{history_mixture}, \text{history_init})\\
+log(shape[i]) = \alpha^{shape} + \beta^{shape}_H \cdot \Delta h[i] \\
+log(rate[i]) = \alpha^{rate} + \beta^{rate}_H \cdot \Delta h[i] \\
+\Delta h[i] = \text{cumulative_history}(\tau, \text{history_init})\\
 \alpha^{shape}, \alpha^{rate} \sim Normal(log(3), 5) \\
 \beta^{shape}_H, \beta^{rate}_H \sim Normal(0, 1) \\
-\tau \sim Normal(log(1), 0.75)$$
+\tau \sim Normal(log(1), 0.15)$$
+
+## Passing Stan control parameters
+You can pass Stan control parameters via `control` argument, e.g.,
+```{r eval=FALSE}
+gamma_fit <- fit_cumhist(br_singleblock,
+                        state="State",
+                        duration="Duration",
+                        control=list(max_treedepth = 15,
+                                     adapt_delta = 0.99))
+```
+
+See Stan documentation for details [@Carpenter2017].
 
 ## Run
-By default, `fit_cumhist()` function assumes that the time-series represent a single run with the consequence that history states are initialized only once at the very beginning. You can use `run` argument to pass the name of a column that specifies individual runs. In this case, history is initialize at the beginning of every run to avoid spill-over effects.
+By default, `fit_cumhist()` function assumes that the time-series represent a single run, so that history states are initialized only once at the very beginning. You can use `run` argument to pass the name of a column that specifies individual runs. In this case, history is initialized at the beginning of every run to avoid spill-over effects.
 
 ```{r eval=FALSE}
 gamma_fit <- fit_cumhist(br_single_subject,
@@ -70,10 +81,10 @@ gamma_fit <- fit_cumhist(br_single_subject,
 ```
 
 ## Experimental session
-Experimental session specifies which time-series were measured together and is used to compute an average dominance phase duration that, in turn, is used when computing cumulative history: $\tau_H = \tau <D>$, where $\tau$ is normalized time constant and $<D>$ is the mean dominance phase duration. This can be used to account for changes in overall alternation rate between different sessions (days), as, for example, participants new to the stimuli tend to "speed up" over the course of days [Suzuki & Grabowecky (2007)](https://doi.org/10.1016/j.neuron.2007.09.028). If you _do not_ specify `session` parameter then a single mean dominance phase duration is computed for all runs of a single subject.
+Experimental session specifies which time-series were measured together and is used to compute an average dominance phase duration that, in turn, is used when computing cumulative history: $\tau_H = \tau \cdot <D>$, where $\tau$ is normalized time constant and $<D>$ is the mean dominance phase duration. This can be used to account for changes in overall alternation rate between different sessions (days), as, for example, participants new to the stimuli tend to "speed up" over the course of days [@Suzuki2007]. If you _do not_ specify `session` parameter then a single mean dominance phase duration is computed for all runs of a single subject.
 
 ## Random effect
-The `random_effect` argument allows you to specify a name of the column that codes for a random effect, e.g., participant identity, bistable display (if different displays were used for a single participant), etc. If specified, it is used to fit a hierarchical model with random slopes for the _history effect_ ($\beta_H$). Note that we if random _independent_ intercepts are used as prior research suggest large differences in overall alternation rate between participants [Brascamp et al. (2019)](https://doi.org/10.1167/19.12.15).
+The `random_effect` argument allows you to specify a name of the column that codes for a random effect, e.g., participant identity, bistable display (if different displays were used for a single participant), etc. If specified, it is used to fit a hierarchical model with random slopes for the _history effect_ ($\beta_H$). Note that we if random _independent_ intercepts are used as prior research suggest large differences in overall alternation rate between participants [@Brascamp2019].
 
 Here, is the R code that specifies participants as random effect
 ```{r eval=FALSE}
@@ -87,16 +98,16 @@ gamma_fit <-  fit_cumhist(kde_two_observers,
 And here is the corresponding model, specified for the shape parameter only as identical formulas are used for the rate parameter as well. Here, $R_i$ codes for a random effect level (participant identity) and a non-centered parametrization is used for the pooled random slopes.
 
 $$Duration[i] \sim  Gamma(shape[i], rate[i]) \\
-log(shape[i]) = \alpha[R_i] + \beta_H[R_i] \cdot H_{mix}[i] \\
-H_{mix}[i] = \text{cumulative_history}(\tau,\text{history_mixture}, \text{history_init})\\
+log(shape[i]) = \alpha[R_i] + \beta_H[R_i] \cdot \Delta h[i] \\
+\Delta H[i] = \text{cumulative_history}(\tau, \text{history_init})\\
 \alpha[R_i] \sim Normal(log(3), 5) \\
 \beta_H[R_i] = \beta^{pop}_H + \beta^{z}_H[R_i] \cdot \sigma^{pop}_H\\
 \beta^{pop}_H \sim Normal(0, 1) \\
 \beta^{z}_H[R_i] \sim Normal(0, 1) \\
 \sigma^{pop}_H \sim Exponential(1) \\
-\tau \sim Normal(log(1), 0.75)$$
+\tau \sim Normal(log(1), 0.15)$$
 
-Identical approach is take for $\tau$, if `tau=' "1|random"'` was specified (same holds for `mixed_state=' "1|random"'` and `history_mix=' "1|random"'` arguments, see below).
+Identical approach is take for $\tau$, if `tau=' "1|random"'` was specified and same holds for `mixed_state=' "1|random"'` argument, see below.
 
 ## Fixed effects
 `fit_cumhist()` functions allows you to specify multiple fixed effect terms as a vector of strings. The implementation is restricted to:
@@ -105,29 +116,33 @@ Identical approach is take for $\tau$, if `tau=' "1|random"'` was specified (sam
 * A single value is fitted for each main effect, irrespective of whether a random effect was specified.
 * You cannot specify an interaction either between fixed effects or between a fixed effect and cumulative history variable.
 
-Although this limits usability of the fixed effects, these restrictions allowed for both a simpler model specification and a simpler underlying code. If you do require more complex models, please refer to  [companion vignette](writing-stan-code.html) that provides several examples on writing model using Stan directly.
+Although this limits usability of the fixed effects, these restrictions allowed for both a simpler model specification and a simpler underlying code. If you do require more complex models, please refer to  [companion vignette](writing-stan-code.html) that provides an example on writing model using Stan directly.
+
+You can specify custom priors (a mean and a standard deviation of a prior normal distribution) via `history_effect_prior` and `fixed_effects_priors` arguments. The former accepts a vector with mean and standard deviation, whereas the latter takes a named list in format \code{list("<fixed parameter name>"=c(<mean>, <std>))}.
 
 Once fitted, you can use `fixef()` function to extract a posterior distribution or its summary for each effect.
 
 ## Cumulative history parameters
-`fit_cumhist()` function takes four parameters for cumulative history computation (see also [companion vignette](cumulative-history.html)):
+`fit_cumhist()` function takes three parameters for cumulative history computation (see also [companion vignette](cumulative-history.html)):
 
 * `tau` : a _normalized_ time constant in units of mean dominance phase duration.
 * `mixed_state` : value used for mixed/transition state phases, defaults to `0.5`.
-* `history_mix` : weight used to compute a weighted cumulative history, see [Cumulative History](cumulative-history.html) vignette. Defaults to `0.2`.
 * `history_init` : an initial value for cumulative history at the onset of each run. Defaults to `0`.
 
 Note that although `history_init` accepts only fixed values either a single value used for both states or a vector of two. In contrast, both fixed and fitted values can be used for the other three parameters. Here are possible function argument values
 
-* a single positive number for `tau` or single number within [0, 1] range for `mixed_state` and `history_mix`. In this case, the value is used directly for the cumulative history computation. Default option for  `mixed_state` and `history_mix`.
+* a single positive number for `tau` or single number within [0, 1] range for `mixed_state`. In this case, the value is used directly for the cumulative history computation, which is default option for  `mixed_state`.
 * `NULL` : a single value is fitted and used for all participants and runs. This is a default for `tau`.
 * `'random'` : an _independent_ tau is fitted for each random cluster (participant, displays, etc.). `random_effect` argument must be specified.
 * `'1|random'` : values for individual random cluster are sampled from a fitted population distribution (_pooled_ values). `random_effect` argument must be specified.
 
-Once fitted, you can use `history_tau()`, `history_mixed_state()`, and `history_mix()` functions to obtain a posterior distribution or its summary for each parameter.
+You can specify custom priors for each cumulative history parameter via `history_priors` argument by specifying mean and standard deviation of a prior normal distribution. The `history_priors` argument must be a named list, \code{list("<parameter name>"=c(<mean>, <std>))}, e.g., `history_priors = list("tau"=c(1, 0.15))`.
+
+Once fitted, you can use `history_tau()` and `history_mixed_state()`functions to obtain a posterior distribution or its summary for each parameter.
+
 
 ## Distribution family
-`fit_cumhist` currenly supports three distributions: `'gamma'`, `'lognormal'`, and `'normal'`.
+`fit_cumhist` currently supports three distributions: `'gamma'`, `'lognormal'`, and `'normal'`.
 
 
 ### Gamma
@@ -142,13 +157,16 @@ The $\mu$ parameter is computed via a linear model with a log link function. Pri
 $$Duration[i] \sim Normal(\mu[i], \sigma)$$
 The $\mu$ parameter is computed via a linear model. Priors for the intercept are $\alpha ~ Normal(3, 5)$. Prior for $\sigma$ was $\sigma \sim Exponential(1)$.
 
+## Model comparison
+Models fits can be compared via information criteria. Specifically, the log likelihood is stored in a `log_lik` parameter that can be directly using `loo::extract_log_lik()` function (see package [@@loo]) or used to compute either a leave-one-out cross-validation (via `loo()` convenience function) or WAIC (via `waic()`). These are information criteria that can be used for model comparison the same way as Akaike (AIC), Bayesian (BIC), or deviance (DIC) information criteria. The latter can also be computed from log likelihood, however, WAIC and LOOCV are both preferred for multi-level models, see [@Vehtari2017]. The model comparison itself can be performed via `loo::loo_compare()` function of the `loo` package.
+
 ## Computing and using cumulative history
 If you are interested in the cumulative history itself, you can extract from the fitted object via `extract_history()` function
 ```{r eval=FALSE}
 H <- extract_history(gam_fit)
 ```
 
-Alternatively, you can skip fittiong and compute history directly using predefined values via `compute_history()`.
+Alternatively, you can skip fitting and compute history directly using predefined values via `compute_history()`.
 ```{r eval=FALSE}
 df <- compute_history(br_singleblock,
                       state="State",
@@ -157,4 +175,8 @@ df <- compute_history(br_singleblock,
                       mixed_state=0.5,
                       history_init=0)
 ```
+
+## References
+
+<div id="refs"></div>
 

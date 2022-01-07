@@ -38,7 +38,6 @@ data{
     // --- Cumulative history parameters
     real<lower=0, upper=1> history_starting_values[2]; // Starting values for cumulative history at the beginning of the run
     real<lower=0, upper=1> mixed_state;                // Mixed state signal strength
-    real<lower=0, upper=1> history_mix; // Proportion of history mixing
 }
 parameters {
     real<lower=0> tau; // history time-constant
@@ -57,7 +56,7 @@ transformed parameters{
         // temporary variables
         real current_history[2]; // current computed history
         real tau_H;              // tau in the units of time
-        real hmix;               // computed history mixture
+        real dH;                 // computed history difference
         int iC = 1;              // Index of clear percepts used for fitting
 
         // matrix with signal levels
@@ -78,12 +77,11 @@ transformed parameters{
 
             // for valid percepts, we use history to compute mu
             if (is_used[iT] == 1){
-                // history mixture
-                hmix = history_mix * current_history[istate[iT]] +
-                      (1 - history_mix) * current_history[3-istate[iT]];
+                // history difference
+                dH = current_history[3-istate[iT]] - current_history[istate[iT]];
 
                 // linear model for mu
-                mu[iC] = a + bH * hmix;
+                mu[iC] = a + bH * dH;
                 iC += 1;
             }
 
@@ -110,9 +108,9 @@ model{
 
 
 ## Data preparation
-The `data` section defines model inputs. Hopefully, the comments make understanding it fairly straightforward although it has several features that while not needed for the limited single session / single session example would make it easier to generalized the code for more complicated cases. 
+The `data` section defines model inputs. Hopefully, the comments make understanding it fairly straightforward. However, it has several features that although are not needed for the limited single session / single session make it easier to generalized the code for more complicated cases. 
 
-For example, not all dominance phases are used for fitting. Specifically, we excluded all mixed perception phases, first dominance phase for each percept (not enough time to form reliably history) and last dominance phase (curtailed by the end of the block). Valid dominance phases are marked in `is_used` vector. Their total number is stored in `clearN` variable and the actual dominance durations in `clear_duration`. The latter is not strictly necessary but allows us to avoid a loop and vectorize the sampling statement `clear_duration ~ lognormal(exp(mu), sigma);`.
+For example, not all dominance phases are used for fitting. Specifically, all mixed perception phases, first dominance phase for each percept (not enough time to form reliably history) and last dominance phase (curtailed by the end of the block) are excluded. Valid dominance phases are marked in `is_used` vector. Their total number is stored in `clearN` variable and the actual dominance durations in `clear_duration`. The latter is not strictly necessary but allows us to avoid a loop and vectorize the sampling statement `clear_duration ~ lognormal(exp(mu), sigma);`.
 
 In addition, `session_tmean` is a vector rather than a scalar. This is not necessary for a single session example here but we opted to use as it will better generalize for more complicated cases.
 
@@ -140,8 +138,7 @@ stan_data <- list(
   
   # history parameters, all fixed to default values
   history_starting_values = c(0, 0),
-  mixed_state = 0.5,
-  history_mix = 0.2
+  mixed_state = 0.5
 )
 ```
 

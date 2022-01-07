@@ -2,7 +2,14 @@
 ## First CRAN Release
 * Initial CRAN Release
 
-# bistablehistory 1.0.1
+# bistablehistory 1.1.0
 ## Improvements
-* Custom prior values for history parameters
-* Simplified Stan code
+* Custom prior values for history parameters, intercept terms, history effect, and fixed effects.
+* Simplified Stan code.
+* predict() returns a vector of length that matches original table.
+
+## Bug Fixes
+* Change to difference in history values instead of the weighted mean.
+* Use for scale instead of rate for prediction for Gamma family.
+* Spelling in documentation.
+* Additional tests.

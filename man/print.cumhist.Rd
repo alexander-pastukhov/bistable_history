@@ -2,7 +2,7 @@
 % Please edit documentation in R/print.R
 \name{print.cumhist}
 \alias{print.cumhist}
-\title{Prints out cumhit object}
+\title{Prints out cumhist object}
 \usage{
 \method{print}{cumhist}(x, ...)
 }
@@ -15,11 +15,11 @@
 Nothing, console output only.
 }
 \description{
-Prints out cumhit object
+Prints out cumhist object
 }
 \examples{
 \donttest{
-br_fit <- fit_cumhist(br_singleblock, state="State", duration="Duration", fixed="Time")
+br_fit <- fit_cumhist(br_singleblock, state="State", duration="Duration", fixed_effects="Time")
 br_fit
 }
 }

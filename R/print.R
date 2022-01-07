@@ -1,4 +1,4 @@
-#' Prints out cumhit object
+#' Prints out cumhist object
 #'
 #' @param x A [cumhist][cumhist-class()] object
 #' @param ... Unused
@@ -9,7 +9,7 @@
 #'
 #' @examples
 #' \donttest{
-#' br_fit <- fit_cumhist(br_singleblock, state="State", duration="Duration", fixed="Time")
+#' br_fit <- fit_cumhist(br_singleblock, state="State", duration="Duration", fixed_effects="Time")
 #' br_fit
 #' }
 

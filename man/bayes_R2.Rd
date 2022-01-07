@@ -29,7 +29,7 @@ R-squared for Bayesian regression models. The American Statistician
 }
 \examples{
 \donttest{
-br_fit <- fit_cumhist(br_singleblock, state="State", duration="Duration")
+br_fit <- fit_cumhist(br_singleblock, state = "State", duration = "Duration")
 bayes_R2(br_fit)
 }
 }

@@ -22,7 +22,10 @@ Extracts models fixed-effect terms for every modeled distribution parameter.
 }
 \examples{
 \donttest{
-br_fit <- fit_cumhist(br_singleblock, state="State", duration="Duration", fixed="Time")
+br_fit <- fit_cumhist(br_singleblock,
+                      state = "State",
+                      duration = "Duration",
+                      fixed_effects = "Time")
 fixef(br_fit)
 }
 }

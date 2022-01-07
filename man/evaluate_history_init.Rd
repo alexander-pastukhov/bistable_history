@@ -13,7 +13,7 @@ evaluate_history_init(history_init)
 A vector of two values
 }
 \description{
-Checkes number and range of values. If a scalar is passed, uses same value
+Checks number and range of values. If a scalar is passed, uses same value
 for both states.
 }
 \examples{

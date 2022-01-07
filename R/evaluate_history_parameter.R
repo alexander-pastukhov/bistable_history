@@ -78,7 +78,7 @@ evaluate_history_option <- function(param_name, param_value, randomN, upperLimit
 
 #' Evaluates validity of initial history values.
 #'
-#' Checkes number and range of values. If a scalar is passed, uses same value
+#' Checks number and range of values. If a scalar is passed, uses same value
 #' for both states.
 #'
 #' @param history_init Either a single value or a pair of values within 0..1 range.

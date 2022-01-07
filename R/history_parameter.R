@@ -1,8 +1,7 @@
 #' Extract values of used or fitted history parameter
 #'
 #' @param object An object of class [cumhist][cumhist-class()]
-#' @param param Paramtere name: \code{"tau"}, \code{"mixed_state"},
-#' or \code{"history_mix"}.
+#' @param param Parameter name: \code{"tau"} or \code{"mixed_state"}
 #' @param summary Whether summary statistics should be returned instead of
 #' raw sample values. Defaults to \code{TRUE}
 #' @param probs The percentiles used to compute summary, defaults to 89% credible interval.
@@ -31,10 +30,10 @@ history_parameter <- function(object, param, summary=TRUE, probs=c(0.055, 0.945)
   if (is.null(object$stanfit)) stop("The object has no fitted stan model")
 
   # link functions
-  lf <- list("tau" = exp, "mixed_state"=boot::inv.logit, "history_mix"=boot::inv.logit)
+  lf <- list("tau" = exp, "mixed_state"=boot::inv.logit)
 
   # sanity check
-  if (!param %in% c("tau", "mixed_state", "history_mix")) stop("Unknown history parameter")
+  if (!param %in% c("tau", "mixed_state")) stop("Unknown history parameter")
 
   # trivial case of user-supplied single constant value
   if (object$data[[paste0(param, '_option')]] == 1) {
@@ -172,30 +171,4 @@ history_tau <- function(object, summary=TRUE, probs=c(0.055, 0.945), includePopu
 #' }
 history_mixed_state <- function(object, summary=TRUE, probs=c(0.055, 0.945), includePopulationLevel = TRUE){
   bistablehistory::history_parameter(object, "mixed_state", summary, probs, includePopulationLevel)
-}
-
-
-#' Extract values of used or fitted history parameter history_mix
-#'
-#' A short-cut for \code{history_parameter(object, "history_mix", ...)}.
-#'
-#' @param object An object of class [cumhist][cumhist-class()]
-#' @param summary Whether summary statistics should be returned instead of
-#' raw sample values. Defaults to \code{TRUE}
-#' @param probs The percentiles used to compute summary, defaults to 89% credible interval.
-#' @param includePopulationLevel Logical, for pooled random effect only. Whether to include
-#' population mean as a separate \code{"_population"} level, default to \code{TRUE}.
-#'
-#' @return A single value, if fixed value was used. A vector or a tibble, depending on the
-#' option used (single intercept, independent or random intercepts), and whether summary was
-#' requested.
-#' @export
-#'
-#' @examples
-#' \donttest{
-#' br_fit <- fit_cumhist(br_singleblock, state="State", duration="Duration")
-#' history_tau(br_fit)
-#' }
-history_mix <- function(object, summary=TRUE, probs=c(0.055, 0.945), includePopulationLevel=TRUE){
-  bistablehistory::history_parameter(object, "history_mix", summary, probs, includePopulationLevel)
 }
