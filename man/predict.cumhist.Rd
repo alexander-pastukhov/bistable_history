@@ -4,7 +4,7 @@
 \alias{predict.cumhist}
 \title{Computes predicted dominance phase durations using posterior predictive distribution.}
 \usage{
-\method{predict}{cumhist}(object, summary = TRUE, probs = NULL, ...)
+\method{predict}{cumhist}(object, summary = TRUE, probs = NULL, full_length = TRUE, ...)
 }
 \arguments{
 \item{object}{An object of class \link[=cumhist-class]{cumhist}}
@@ -13,6 +13,10 @@
 raw sample values. Defaults to \code{TRUE}}
 
 \item{probs}{The percentiles used to compute summary, defaults to NULL (no CI).}
+
+\item{full_length}{Only for \code{summary = TRUE}, whether the summary table should
+include rows with no predictions. I.e., rows with mixed phases, first/last dominance
+phase in the run, etc. See \code{\link[=preprocess_data]{preprocess_data()}}. Defaults to \code{TRUE}.}
 
 \item{...}{Unused}
 }
@@ -23,12 +27,14 @@ If \code{summary=TRUE} and \code{probs} is not \code{NULL}, a data.frame
 with a column \emph{"Predicted"} (mean) and a column for each specified quantile.
 }
 \description{
-Computes predicted dominance phase durations using fitted model.
+Computes predicted dominance phase durations using fitted model. Returns predicted
+values only for the dominance phases that were marked for use. I.e., excluding first
+and last dominance phases, mixed phases, etc. See \code{\link[=preprocess_data]{preprocess_data()}}.
 }
 \examples{
 \donttest{
-br_fit <- fit_cumhist(br_singleblock, state="State", duration="Duration")
-predicted <- predict(br_fit)
+br_fit <- fit_cumhist(br_singleblock, state = "State", duration = "Duration")
+predict(br_fit)
 
 # full posterior prediction samples
 predictions_samples <- predict(br_fit, summary=FALSE)
