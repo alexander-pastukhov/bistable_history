@@ -196,7 +196,7 @@ fit_cumhist <- function(data,
   ## --- 6. Family
   supported_families <- c("gamma" = 1, "lognormal" = 2, "normal" = 3)
   if (!family %in% names(supported_families)) stop(sprintf("Unsupported distribution family '%s'", family))
-  lmN <- c("gamma" = 2, "lognormal" = 1, "exgauss" = 2, "normal" = 1)
+  lmN <- c("gamma" = 2, "lognormal" = 1, "normal" = 1)
   varianceN <- c("gamma" = 0, "lognormal" = 1, "normal" = 1)
 
   cumhist$family <- family
