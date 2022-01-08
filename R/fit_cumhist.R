@@ -257,10 +257,12 @@ fit_cumhist <- function(data,
 
   if (chains > 0) {
     cumhist$stanfit <- rstan::sampling(stanmodels$historylm,
-                                      data = cumhist$data,
-                                      chains = chains,
-                                      cores = cores,
-                                      ...)
+                                       data = cumhist$data,
+                                       chains = chains,
+                                       cores = cores,
+                                       pars = "lm_param",
+                                       include = FALSE,
+                                       ...)
   }
   else {
     message("Zero chain specified, skipping sampling.")
