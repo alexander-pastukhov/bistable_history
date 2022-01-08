@@ -45,7 +45,7 @@ predict.cumhist <-  function(object, summary = TRUE, probs = NULL, full_length =
   if (object$family == "gamma") {
     predictions <- exp(lm_params[, 1, ]) * exp(lm_params[, 2, ])
   } else if (object$family == "lognormal") {
-    sigma <- rstan::extract(object$stanfit, pars="sigma")$sigma
+    sigma <- c(rstan::extract(object$stanfit, pars="sigma")$sigma)
     predictions <- exp(exp(lm_params[, 1, ]) + sigma / 2)
   } else if (object$family == "normal") {
     predictions <- lm_params[, 1, ]

@@ -25,11 +25,40 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// predict_samples
+NumericMatrix predict_samples(int family, int fixedN, int randomN, int lmN, IntegerVector istate, DoubleVector duration, IntegerVector is_used, IntegerVector run_start, DoubleVector session_tmean, IntegerVector irandom, NumericMatrix fixed, NumericMatrix tau_ind, NumericMatrix mixed_state_ind, DoubleVector history_init, NumericMatrix a, NumericMatrix bH, NumericMatrix bF, DoubleVector sigma);
+RcppExport SEXP _bistablehistory_predict_samples(SEXP familySEXP, SEXP fixedNSEXP, SEXP randomNSEXP, SEXP lmNSEXP, SEXP istateSEXP, SEXP durationSEXP, SEXP is_usedSEXP, SEXP run_startSEXP, SEXP session_tmeanSEXP, SEXP irandomSEXP, SEXP fixedSEXP, SEXP tau_indSEXP, SEXP mixed_state_indSEXP, SEXP history_initSEXP, SEXP aSEXP, SEXP bHSEXP, SEXP bFSEXP, SEXP sigmaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type family(familySEXP);
+    Rcpp::traits::input_parameter< int >::type fixedN(fixedNSEXP);
+    Rcpp::traits::input_parameter< int >::type randomN(randomNSEXP);
+    Rcpp::traits::input_parameter< int >::type lmN(lmNSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type istate(istateSEXP);
+    Rcpp::traits::input_parameter< DoubleVector >::type duration(durationSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type is_used(is_usedSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type run_start(run_startSEXP);
+    Rcpp::traits::input_parameter< DoubleVector >::type session_tmean(session_tmeanSEXP);
+    Rcpp::traits::input_parameter< IntegerVector >::type irandom(irandomSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type fixed(fixedSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type tau_ind(tau_indSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type mixed_state_ind(mixed_state_indSEXP);
+    Rcpp::traits::input_parameter< DoubleVector >::type history_init(history_initSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type a(aSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type bH(bHSEXP);
+    Rcpp::traits::input_parameter< NumericMatrix >::type bF(bFSEXP);
+    Rcpp::traits::input_parameter< DoubleVector >::type sigma(sigmaSEXP);
+    rcpp_result_gen = Rcpp::wrap(predict_samples(family, fixedN, randomN, lmN, istate, duration, is_used, run_start, session_tmean, irandom, fixed, tau_ind, mixed_state_ind, history_init, a, bH, bF, sigma));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 RcppExport SEXP _rcpp_module_boot_stan_fit4historylm_mod();
 
 static const R_CallMethodDef CallEntries[] = {
     {"_bistablehistory_fast_history_compute", (DL_FUNC) &_bistablehistory_fast_history_compute, 4},
+    {"_bistablehistory_predict_samples", (DL_FUNC) &_bistablehistory_predict_samples, 18},
     {"_rcpp_module_boot_stan_fit4historylm_mod", (DL_FUNC) &_rcpp_module_boot_stan_fit4historylm_mod, 0},
     {NULL, NULL, 0}
 };
