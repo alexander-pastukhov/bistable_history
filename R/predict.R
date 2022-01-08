@@ -39,20 +39,66 @@
 predict.cumhist <-  function(object, summary = TRUE, probs = NULL, full_length = TRUE, ...) {
   if (is.null(object$stanfit)) stop("The object has no fitted stan model")
 
-  # extracting parameters
-  lm_params <- rstan::extract(object$stanfit, pars="lm_param")$lm_param
+  # extracting history effects
+  tau_norm <- extract_history_parameter(object, "tau", link_function = exp)
+  mixed_state <- extract_history_parameter(object, "mixed_state", link_function = boot::inv.logit)
 
-  if (object$family == "gamma") {
-    predictions <- exp(lm_params[, 1, ]) * exp(lm_params[, 2, ])
-  } else if (object$family == "lognormal") {
-    sigma <- c(rstan::extract(object$stanfit, pars="sigma")$sigma)
-    predictions <- exp(exp(lm_params[, 1, ]) + sigma / 2)
-  } else if (object$family == "normal") {
-    predictions <- lm_params[, 1, ]
+  # extracting intercepts, note that the matrix order is
+  # lm 1 for all participants, then lm 2 for all participants
+  a <- extract_term_to_matrix(object, "a")
+
+  # extracting history effect, same order as for "a"
+  if (object$data$randomN == 1) {
+    bH <- extract_replicate_term_to_matrix(object, "bH_mu")
+  } else {
+    bH <- extract_replicate_term_to_matrix(object, "bH_mu") +
+      extract_replicate_term_to_matrix(object, "bH_sigma") *
+      extract_term_to_matrix(object, "bH_rnd")
   }
 
+  # extracting variance (if necessary)
+  if (object$data$varianceN > 0) {
+    sigma <-  rstan::extract(object$stanfit, pars = "sigma")[[1]]
+  } else {
+    # placeholder to pass to C code
+    sigma <- rep(0, nrow(a))
+  }
+
+  # extracting fixed effects (if necessary)
+  if (object$data$fixedN > 0) {
+    bF <- extract_term_to_matrix(object, "bF")
+  } else {
+    bF <- matrix(rep(0, nrow(a)), ncol=1)
+  }
+
+  # predicting all samples
+  predictions <- predict_samples(object$data$family,     # dimensions
+                                 object$data$fixedN,
+                                 object$data$randomN,
+                                 object$data$lmN,
+                                 object$data$istate - 1, # data
+                                 object$data$duration,
+                                 object$data$is_used,
+                                 object$data$run_start,
+                                 object$data$session_tmean,
+                                 object$data$irandom - 1,
+                                 object$data$fixed,
+                                 tau_norm,               # history parameters
+                                 mixed_state,
+                                 object$data$history_starting_values,
+                                 a,                      # lm parameters
+                                 bH,
+                                 bF,
+                                 sigma)
+
   # raw samples
-  if (!summary) return(predictions)
+  if (!summary) {
+    if (full_length) {
+      return(predictions)
+    } else {
+      return(predictions[, !is.na(predictions[1, ])])
+    }
+  }
 
   # means
   predictions_summary <- tibble::tibble(Predicted = apply(as.matrix(predictions), MARGIN=2, FUN=mean))
@@ -68,7 +114,7 @@ predict.cumhist <-  function(object, summary = TRUE, probs = NULL, full_length =
   }
 
   # to we need the full length?
-  if (!full_length) {
+  if (full_length) {
     if (is.null(probs)) {
       return(predictions_summary$Predicted)
     } else {
@@ -76,21 +122,11 @@ predict.cumhist <-  function(object, summary = TRUE, probs = NULL, full_length =
     }
   }
 
-  full_length_predictions <-
-    tibble(is_used = object$data$is_used) %>%
-    group_by(.data$is_used) %>%
-    mutate(id = row_number()) %>%
-    ungroup() %>%
-    mutate(id = ifelse(.data$is_used, .data$id, NA)) %>%
-    left_join(predictions_summary %>%
-                mutate(id = row_number()),
-              by = "id") %>%
-    select(-c("is_used", "id"))
-
+  # dropping rows with NA
   if (is.null(probs)) {
-    return(full_length_predictions$Predicted)
+    return(na.omit(predictions_summary$Predicted))
   } else {
-    return(full_length_predictions)
+    return(na.omit(predictions_summary))
   }
 }
 
