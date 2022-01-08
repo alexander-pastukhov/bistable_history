@@ -9,7 +9,7 @@ fast_history_compute(df, normalized_tau, mixed_state, history_init)
 \arguments{
 \item{df}{DataFrame with \code{"state"} (integer, 1 and 2 clear state, 3 - mixed state), \code{"duration"} (double),
 \code{"irandom"} (integer, 1-based index of a random cluster), \code{"run_start"} (integer, 1 for the first entry of
-the run, 0 otherwise), \code{"session_tmean"} (double)}
+the run, 0 othwerwise), \code{"session_tmean"} (double)}
 
 \item{normalized_tau}{DoubleVector A normalized tau value for each random cluster / individual. Thus, its length must be
 equal to the number of unique indexes in \code{df["irandom"]}.}

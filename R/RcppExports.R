@@ -9,7 +9,7 @@
 #'
 #' @param df DataFrame with \code{"state"} (integer, 1 and 2 clear state, 3 - mixed state), \code{"duration"} (double),
 #'   \code{"irandom"} (integer, 1-based index of a random cluster), \code{"run_start"} (integer, 1 for the first entry of
-#'   the run, 0 otherwise), \code{"session_tmean"} (double)
+#'   the run, 0 othwerwise), \code{"session_tmean"} (double)
 #' @param normalized_tau DoubleVector A normalized tau value for each random cluster / individual. Thus, its length must be
 #'   equal to the number of unique indexes in \code{df["irandom"]}.
 #' @param mixed_state DoubleVector A values used for the mixed state for each random cluster / individual.
@@ -23,5 +23,44 @@
 #' fast_history_compute(df, 1, 0.5, c(0, 0))
 fast_history_compute <- function(df, normalized_tau, mixed_state, history_init) {
     .Call(`_bistablehistory_fast_history_compute`, df, normalized_tau, mixed_state, history_init)
+}
+
+#' Computes prediction for a each sample.
+#'
+#' Computing prediction for each sample,
+#' recomputing cumulative history and uses
+#' fitted parameter values.
+#'
+#' @param family int, distribution family: gamma (1), lognormal(2), or
+#' normal (3).
+#' @param fixedN int, number of fixed parameters (>= 0).
+#' @param randomN int, number of random factors (>= 1).
+#' @param lmN int, number of linear models (>= 1).
+#' @param istate IntegerVector, zero-based perceptual state 0 or 1,
+#' 2 is mixed state.
+#' @param duration DoubleVector, duration of a dominance phase.
+#' @param is_used IntegerVector, whether dominance phase is used for
+#' prediction (1) or not (0).
+#' @param run_start IntegerVector, 1 whenever a new run starts.
+#' @param session_tmean DoubleVector, average dominance phase duration.
+#' @param irandom IntegerVector, zero-based index of a random effect.
+#' @param fixed NumericMatrix, matrix with fixed effect values.
+#' @param tau_ind NumericMatix, matrix with samples of tau for each
+#' random level.
+#' @param mixed_state_ind NumericMatrix, matrix with samples of
+#' mixed_state for each random level.
+#' @param history_init DoubleVector, Initial values of history for a run
+#' @param a NumericMatrix, matrix with samples of
+#' a (intercept) for each random level.
+#' @param bH NumericMatrix, matrix with sample of
+#' bH for each linear model and random level.
+#' @param bF NumericMatrix, matrix with sample of
+#' bF for each linear model and fixed factor.
+#' @param sigma DoubleVector, samples of sigma.
+#'
+#' @return NumericMatrix with predicted durations for each sample.
+#' @export
+predict_samples <- function(family, fixedN, randomN, lmN, istate, duration, is_used, run_start, session_tmean, irandom, fixed, tau_ind, mixed_state_ind, history_init, a, bH, bF, sigma) {
+    .Call(`_bistablehistory_predict_samples`, family, fixedN, randomN, lmN, istate, duration, is_used, run_start, session_tmean, irandom, fixed, tau_ind, mixed_state_ind, history_init, a, bH, bF, sigma)
 }
 

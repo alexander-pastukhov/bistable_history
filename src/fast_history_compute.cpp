@@ -2,6 +2,10 @@
 #include <math.h>
 using namespace Rcpp;
 
+const int L_GAMMA = 1;
+const int L_LOGNORMAL = 2;
+const int L_NORMAL = 3;
+
 NumericMatrix state_to_signal_levels(double mixed_level){
   NumericMatrix signal_level(2, 3);
 
@@ -72,4 +76,115 @@ NumericMatrix fast_history_compute(DataFrame df, DoubleVector normalized_tau, Do
   }
 
   return history;
+}
+
+
+//' Computes prediction for a each sample.
+//'
+//' Computing prediction for each sample,
+//' recomputing cumulative history and uses
+//' fitted parameter values.
+//'
+//' @param family int, distribution family: gamma (1), lognormal(2), or
+//' normal (3).
+//' @param fixedN int, number of fixed parameters (>= 0).
+//' @param randomN int, number of random factors (>= 1).
+//' @param lmN int, number of linear models (>= 1).
+//' @param istate IntegerVector, zero-based perceptual state 0 or 1,
+//' 2 is mixed state.
+//' @param duration DoubleVector, duration of a dominance phase.
+//' @param is_used IntegerVector, whether dominance phase is used for
+//' prediction (1) or not (0).
+//' @param run_start IntegerVector, 1 whenever a new run starts.
+//' @param session_tmean DoubleVector, average dominance phase duration.
+//' @param irandom IntegerVector, zero-based index of a random effect.
+//' @param fixed NumericMatrix, matrix with fixed effect values.
+//' @param tau_ind NumericMatix, matrix with samples of tau for each
+//' random level.
+//' @param mixed_state_ind NumericMatrix, matrix with samples of
+//' mixed_state for each random level.
+//' @param history_init DoubleVector, Initial values of history for a run
+//' @param a NumericMatrix, matrix with samples of
+//' a (intercept) for each random level.
+//' @param bH NumericMatrix, matrix with sample of
+//' bH for each linear model and random level.
+//' @param bF NumericMatrix, matrix with sample of
+//' bF for each linear model and fixed factor.
+//' @param sigma DoubleVector, samples of sigma.
+//'
+//' @return NumericMatrix with predicted durations for each sample.
+//' @export
+// [[Rcpp::export]]
+NumericMatrix predict_samples(int family,
+                              int fixedN,
+                              int randomN,
+                              int lmN,
+                              IntegerVector istate, // data
+                              DoubleVector duration,
+                              IntegerVector is_used,
+                              IntegerVector run_start,
+                              DoubleVector session_tmean,
+                              IntegerVector irandom,
+                              NumericMatrix fixed,
+                              NumericMatrix tau_ind, // history parameters
+                              NumericMatrix mixed_state_ind,
+                              DoubleVector history_init,
+                              NumericMatrix a, // linear model parameters
+                              NumericMatrix bH,
+                              NumericMatrix bF,
+                              DoubleVector sigma)
+{
+  // initialize matrix to NA
+  NumericMatrix predicted(sigma.length(), istate.length());
+  std::fill(predicted.begin(), predicted.end(), NumericVector::get_na());
+
+  // running history parameters
+  DoubleVector current_history = clone(history_init);
+  double tau;
+  NumericMatrix level(2, 3);
+  DoubleVector lm_param(lmN);
+
+  for(int iSample = 0; iSample < sigma.length(); iSample++) {
+    for(int iT = 0; iT < istate.length(); iT++) {
+      // initialize new run
+      if (run_start[iT]) {
+        current_history = clone(history_init);
+        tau = session_tmean[iT] * tau_ind(iSample, irandom[iT]);
+        level = state_to_signal_levels(mixed_state_ind(iSample, irandom[iT]));
+      }
+
+      // we need to make a prediction
+      if (is_used[iT]) {
+        double dH = current_history[1 - istate[iT]] - current_history[istate[iT]];
+
+        // computing parameter(s) from linear model(s)
+        for(int iLM = 0; iLM < lmN; iLM++) {
+          lm_param[iLM] = a(iSample, irandom[iT] + iLM * randomN) +
+            bH(iSample, irandom[iT] + iLM * randomN) * dH;
+          for(int iF = 0; iF < fixedN; iF++) {
+            lm_param[iLM] += fixed(iT, iF) * bF(iSample, iF + iLM * fixedN);
+          }
+        }
+
+        // computing mean of the distribution (from its parameters)
+        switch (family) {
+        case L_GAMMA:
+          predicted(iSample, iT) = exp(lm_param[0]) * exp(lm_param[1]);
+          break;
+        case L_LOGNORMAL:
+          predicted(iSample, iT) = exp(exp(lm_param[0]) + sigma(iSample) / 2);
+          break;
+        case L_NORMAL:
+          predicted(iSample, iT) = lm_param[0];
+          break;
+        }
+      }
+
+      // computing history for the NEXT episode
+      for(int iS = 0; iS < 2; iS ++){
+        current_history[iS] = level(iS, istate[iT]) + (current_history[iS] - level(iS, istate[iT])) * exp(-duration[iT] / tau);
+      }
+    }
+  }
+  return predicted;
 }
