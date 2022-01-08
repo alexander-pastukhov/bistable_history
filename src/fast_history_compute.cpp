@@ -48,14 +48,14 @@ NumericMatrix fast_history_compute(DataFrame df, DoubleVector normalized_tau, Do
   DoubleVector session_tmean = df["session_tmean"];
 
   // temporary variables
-  DoubleVector current_history = history_init;
+  DoubleVector current_history = clone(history_init);
   double tau;
   NumericMatrix level(2, 3);
 
   for(int iR = 0; iR < df.nrows();iR++){
     // new time-series, recompute absolute tau and reset history state
     if (run_start[iR]){
-      current_history = history_init;
+      current_history = clone(history_init);
       tau = session_tmean[iR] * normalized_tau[irandom[iR] - 1];
       level = state_to_signal_levels(mixed_state[irandom[iR] - 1]);
     }
