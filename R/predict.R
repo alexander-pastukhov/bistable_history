@@ -21,7 +21,7 @@
 #' @importFrom dplyr bind_cols
 #' @importFrom rlang .data
 #' @importFrom rstan extract
-#' @importFrom stats quantile predict
+#' @importFrom stats quantile predict na.omit
 #' @importFrom tibble tibble as_tibble
 #'
 #' @method predict cumhist
