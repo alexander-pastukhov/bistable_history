@@ -35,7 +35,7 @@ bayes_R2.cumhist <- function(object, summary=TRUE, probs=c(0.055, 0.945), ...){
   if (is.null(object$stanfit)) stop("The object has no fitted stan model")
 
   # compute bayes R2 via rstantools
-  predicted <- predict(object, summary=FALSE)
+  predicted <- predict(object, summary=FALSE, full_length = FALSE)
   r2s <- rstantools::bayes_R2(predicted, object$data$clear_duration)
 
   # returning
