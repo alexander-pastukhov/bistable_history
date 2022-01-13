@@ -15,8 +15,8 @@ extract_term_to_matrix(object, term)
 Matrix
 }
 \description{
-Extracts a 3D array for a term with "\link[=" sample, linear-model,
-random/fixed-effect "]{" sample, linear-model, random/fixed-effect "}" order and returns a matrix with samples as rows
+Extracts a 3D array for a term with  sample, linear-model,
+random/fixed-effect order and returns a matrix with samples as rows
 and columns in order 1) all random/fixed effects for lm1, 2) all
 random/fixed effects for lm2, etc.
 }
