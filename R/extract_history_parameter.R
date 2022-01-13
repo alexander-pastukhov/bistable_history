@@ -35,7 +35,7 @@ extract_history_parameter <- function(object, param_name, samplesN=NULL, link_fu
                      ncol = object$data$randomN)
   } else if (option == 2) {
     # single fitted value
-    values <- matrix(rep(rstan::extract(object$stanfit, pars=paste0(param_name, "_mu")[[1]]),
+    values <- matrix(rep(rstan::extract(object$stanfit, pars=paste0(param_name, "_mu"))[[1]],
                          object$data$randomN),
                      ncol = object$data$randomN)
   } else if (option == 3) {
