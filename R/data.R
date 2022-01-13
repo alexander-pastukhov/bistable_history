@@ -92,3 +92,18 @@
 #' @source  \doi{10.1167/11.10.12}
 "nc"
 
+#' Binocular rivalry, variable contrast
+#'
+#' Dataset on binocular rivalry with variable but equal
+#' contrast for six participants.
+#'
+#' @format A data frame with 4616 rows and 6 variables:
+#' \describe{
+#'   \item{Observer}{Participant ID.}
+#'   \item{Block}{Run / block index.}
+#'   \item{Contrast}{Contrast on scale from 0 to 1.}
+#'   \item{Time}{Time relative to the run onset in _seconds_}
+#'   \item{State}{Factor with levels \code{"Left"}, \code{"Right"} (clear states), and \code{"Mixed"}}.
+#'   \item{Duration}{Duration of a dominance phase in _seconds_. Note that the duration for the last dominance phase is curtailed and, therefore, set to zero.}
+#' }
+"br_contrast"
