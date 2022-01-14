@@ -20,6 +20,9 @@
 #' @examples
 #' evaluate_history_option("tau", 1, 1, Inf)
 evaluate_history_option <- function(param_name, param_value, randomN, upperLimit){
+  # multiple param_value values are not allowed
+  if (!is.null(param_value) & length(param_value) != 1) stop(sprintf("Multiple values for %s", param_name))
+
   # if there is only a single cluster, both "random" and "1|random" make no sense
   if (!is.null(param_value) && param_value %in% c("random", "1|random") && randomN == 1) param_value <- NULL
 
