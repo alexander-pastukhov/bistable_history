@@ -1,5 +1,7 @@
 # Cumulative History Analysis For Bistable Perception Time Series
 
+[![DOI](https://zenodo.org/badge/299245172.svg)](https://zenodo.org/badge/latestdoi/299245172)
+
 A package to compute a cumulative history for time-series of perceptual
 dominance in bistable displays.
 
