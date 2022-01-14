@@ -26,9 +26,9 @@ library(bistablehistory)
 
 data(br_singleblock)
 gamma_fit <- fit_cumhist(br_singleblock,
-                        state="State",
-                        duration="Duration",
-                        refresh=0)
+                         state="State",
+                         duration="Duration",
+                         refresh=0)
 ```
 
 Alternatively, you specify _onset_ of individual dominance phases that will be used to compute their duration.
