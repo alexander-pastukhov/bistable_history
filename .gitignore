@@ -3,3 +3,4 @@ inst/doc
 *.exe
 .Rhistory
 .Rbuildignore
+docs
