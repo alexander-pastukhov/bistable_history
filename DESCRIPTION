@@ -16,7 +16,8 @@ Description: Estimates cumulative history for time-series for continuously
     Provides a method to compute history directly and example of using the
     computation on a custom Stan code.
 License: GPL (>= 3)
-URL: https://github.com/alexander-pastukhov/bistablehistory
+URL: https://github.com/alexander-pastukhov/bistablehistory,
+    https://alexander-pastukhov.github.io/bistablehistory
 BugReports: https://github.com/alexander-pastukhov/bistablehistory/issues
 Encoding: UTF-8
 LazyData: true
