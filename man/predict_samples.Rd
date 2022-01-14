@@ -51,7 +51,7 @@ prediction (1) or not (0).}
 
 \item{fixed}{NumericMatrix, matrix with fixed effect values.}
 
-\item{tau_ind}{NumericMatix, matrix with samples of tau for each
+\item{tau_ind}{NumericMatrix, matrix with samples of tau for each
 random level.}
 
 \item{mixed_state_ind}{NumericMatrix, matrix with samples of

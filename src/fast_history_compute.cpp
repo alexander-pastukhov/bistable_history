@@ -27,7 +27,7 @@ NumericMatrix state_to_signal_levels(double mixed_level){
 //'
 //' @param df DataFrame with \code{"state"} (integer, 1 and 2 clear state, 3 - mixed state), \code{"duration"} (double),
 //'   \code{"irandom"} (integer, 1-based index of a random cluster), \code{"run_start"} (integer, 1 for the first entry of
-//'   the run, 0 othwerwise), \code{"session_tmean"} (double)
+//'   the run, 0 otherwise), \code{"session_tmean"} (double)
 //' @param normalized_tau DoubleVector A normalized tau value for each random cluster / individual. Thus, its length must be
 //'   equal to the number of unique indexes in \code{df["irandom"]}.
 //' @param mixed_state DoubleVector A values used for the mixed state for each random cluster / individual.
@@ -99,7 +99,7 @@ NumericMatrix fast_history_compute(DataFrame df, DoubleVector normalized_tau, Do
 //' @param session_tmean DoubleVector, average dominance phase duration.
 //' @param irandom IntegerVector, zero-based index of a random effect.
 //' @param fixed NumericMatrix, matrix with fixed effect values.
-//' @param tau_ind NumericMatix, matrix with samples of tau for each
+//' @param tau_ind NumericMatrix, matrix with samples of tau for each
 //' random level.
 //' @param mixed_state_ind NumericMatrix, matrix with samples of
 //' mixed_state for each random level.
