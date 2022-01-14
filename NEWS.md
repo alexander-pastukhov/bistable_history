@@ -6,6 +6,7 @@
 ## Improvements
 * Custom prior values for history parameters, intercept terms, history effect, and fixed effects.
 * Simplified Stan code.
+* predict() computes values from history, reducing fit object size.
 * predict() returns a vector of length that matches original table.
 
 ## Bug Fixes
