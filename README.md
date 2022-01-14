@@ -92,8 +92,8 @@ coef(gamma_fit)
 ```
 
 For further details please see vignettes on package usage ([Usage
-examples](https://cran.r-project.org/web/packages/bistablehistory/vignettes/usage-examples.html)
+examples](https://CRAN.R-project.org/package=bistablehistory/vignettes/usage-examples.html)
 and [Cumulative
-history](https://cran.r-project.org/web/packages/bistablehistory/vignettes/cumulative-history.html))
+history](https://CRAN.R-project.org/package=bistablehistory/vignettes/cumulative-history.html))
 and on an example of writing Stan code directly ([Writing Stan
-code](https://cran.r-project.org/web/packages/bistablehistory/vignettes/writing-stan-code.html)).
+code](https://CRAN.R-project.org/package=bistablehistory/vignettes/writing-stan-code.html)).
