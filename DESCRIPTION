@@ -1,7 +1,7 @@
 Package: bistablehistory
 Title: Cumulative History Analysis for Bistable Perception Time Series
 Version: 1.1.0
-Authors@R: 
+Authors@R:
     person(given = "Alexander",
            family = "Pastukhov",
            role = c("aut", "cre"),
