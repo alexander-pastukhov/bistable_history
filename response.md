@@ -1,3 +1,5 @@
+Thank you for these and earlier comments and suggestions. I have expanded the text (see below for point-by-point responses) and also used this as an opportunity submit an updated package version to CRAN (bug fixes, additional utility functions, and updates vignettes based on commens and suggestions).
+
 **line 16/17 how the approach violates the iid assumption is not clear to me, I would appreciate more explanation on this part.**
 
 Good point! I have expanded to explain how the order and prior perception violate the assumption:
