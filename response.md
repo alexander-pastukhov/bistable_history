@@ -13,4 +13,5 @@ Yes, thank you! I have included the new section on that. effectively, a large ch
 Yes, model comparison via information criteria is not uniquely Bayesian. I have expanded on both the technical details and added a reference on why LOOCV and WAIC are preferred for multilevel models.
 
 **Is there any current R packages or any other software packages for history-dependent analysis? if so, it would be good to cite.**
+
 I have included the information on general time-series packages into the Statement of need.
