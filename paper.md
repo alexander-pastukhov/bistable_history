@@ -7,7 +7,9 @@ tags:
 - time series
 - binocular riavlry
 date: "01 October 2021"
-output: word_document
+output:
+  html_document:
+    df_print: paged
 authors:
 - name: Alexander Pastukhov
   orcid: 0000-0002-8738-8591
