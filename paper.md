@@ -8,9 +8,10 @@ tags:
 - binocular riavlry
 date: "01 October 2021"
 output:
-  word_document: default
+  pdf_document: default
   html_document:
     df_print: paged
+  word_document: default
 authors:
 - name: Alexander Pastukhov
   orcid: 0000-0002-8738-8591
@@ -61,7 +62,7 @@ $$\tag{5} h_i(\Delta t) = h_i(0) + (S - h_i(0)) \cdot (1 - e^{-\Delta t/\tau})$$
 $$\tag{6} h_i(\Delta t) = S + (h_i(0) - S)  \cdot e^{-\Delta t/\tau}$$
 
 
-The figure below shows accumulation over time for three different initial values ($x(0)$), signal strength ($S$), and time constants ($tau$). Note that the package allows to either specify and fit both the time constant (argument `tau` in `fit_cumhist()` function) and the initial history value at the block (`history_init` argument).
+The figure below shows accumulation over time for three different initial values ($h(0)$), signal strength ($S$), and time constants ($tau$). Note that the package allows to either specify and fit both the time constant (argument `tau` in `fit_cumhist()` function) and the initial history value at the block (`history_init` argument).
 
 ![**Figure 2. Cumulative history for different initial conditions, signal strength, and time constants.** \label{fig:fig2}](fig2.png){width=100%}
 
