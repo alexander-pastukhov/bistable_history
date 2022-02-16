@@ -8,9 +8,9 @@ tags:
 - binocular riavlry
 date: "01 October 2021"
 output:
-  pdf_document: default
   html_document:
     df_print: paged
+  pdf_document: default
   word_document: default
 authors:
 - name: Alexander Pastukhov
@@ -67,7 +67,7 @@ The figure below shows accumulation over time for three different initial values
 ![**Figure 2. Cumulative history for different initial conditions, signal strength, and time constants.** \label{fig:fig2}](fig2.png){width=100%}
 
 
-As for a bistable case there are two history states (one for each perceptual state), we compute a history as a difference of cumulative histories
+For a bistable case, there are two history states, one for each perceptual state. Therefore, we compute a history as a difference of cumulative histories:
 $$\tag{7}\Delta h(t, \tau) = h_{suppressed}(t, \tau) - h_{dominant}(t, \tau) $$
 where $h_{dominant}$ and $h_{suppressed}$ are history states for the currently dominant and suppressed states, respectively. _E.g._, if a left eye dominates during the following phase, $h_{dominant} = h_{left}$ and $h_{suppressed} = h_{right}$ and vice versa.
 
