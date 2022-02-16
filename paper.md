@@ -69,10 +69,10 @@ The figure below shows accumulation over time for three different initial values
 
 For a bistable case, there are two history states, one for each perceptual state. Therefore, we compute a history as a difference of cumulative histories:
 $$\tag{7}\Delta h(t, \tau) = h_{suppressed}(t, \tau) - h_{dominant}(t, \tau) $$
-where $h_{dominant}$ and $h_{suppressed}$ are history states for the currently dominant and suppressed states, respectively. _E.g._, if a left eye dominates during the following phase, $h_{dominant} = h_{left}$ and $h_{suppressed} = h_{right}$ and vice versa.
+where $h_{dominant}$ and $h_{suppressed}$ are history states for currently dominant and suppressed states, respectively. _E.g._, if a left eye dominates during the following phase, $h_{dominant} = h_{left}$ and $h_{suppressed} = h_{right}$ and vice versa.
 
 # Usage and Features
-The main function is `fit_cumhist()` that takes a data frame with time-series as a first argument. In addition, you need to specify the name of the column that codes the perceptual state (`state` argument) and a column that holds either dominance phase duration (`duration`) or its onset (`onset`). The code below is the simplest case scenario, fitting data using Gamma distribution (default family) for a single run of a single participant. By default, the function fits the time constant $\tau$ for slowly accumulating adaptation but uses default values for other parameters that influence history computation.
+The main function is `fit_cumhist()` which takes a data frame with time-series as a first argument. In addition, you need to specify the name of the column that codes the perceptual state (`state` argument) and a column that holds either dominance phase duration (`duration`) or its onset (`onset`). The code below is the simplest case scenario, fitting data using Gamma distribution (default family) for a single run of a single participant. By default, the function fits the time constant $\tau$ for slowly accumulating adaptation but uses default values for other parameters that influence history computation.
 
 ```r
 library(bistablehistory)
@@ -83,7 +83,7 @@ gamma_fit <- fit_cumhist(br_singleblock,
                         refresh=0)
 ```
 
-Alternatively, one can specify the _onset_ of individual dominance phases that will be used to compute their duration.
+Alternatively, one can specify the _onset_ of individual dominance phases to compute their duration.
 ```r
 gamma_fit <- fit_cumhist(br_singleblock,
                         state="State",
@@ -111,9 +111,9 @@ br_singleblock$Predicted <- predict(gam_fit)
 ```
 
 The package extends the analysis to multiple experimental runs (via the `run` argument that specifies a variable that identifies individual runs), experimental session (via the `session` argument) that are assumed to have different average dominance phase durations [@Suzuki2007], 
-to multiple participants (via `random_effect` argument). It also allows to incorporate fixed effects, although they are restricted to continuous metric variables (see a vignette on reusing model code directly in Stan for overcoming these limitations). 
+to multiple participants (via `random_effect` argument). It also allows incorporating fixed effects, although they are restricted to continuous metric variables (see a vignette on reusing model code directly in Stan for overcoming these limitations). 
 
-The example below demonstrates an analysis for many observers (`random_effect = "Observer"`) who performed multiple runs (`run = "Block"`) taking into account when the dominance phase occurred (`fixed_effects = "LogTime"`). It also uses custom prior for tau parameter and custom control parameters for Stan sampler. Please refer to “Usage Examples” vignette for details on these and other settings.
+The example below demonstrates an analysis for many observers (`random_effect = "Observer"`) who performed multiple runs (`run = "Block"`) taking into account when the dominance phase occurred (`fixed_effects = "LogTime"`). It also uses custom prior for `tau` parameter and custom control parameters for Stan sampler. Please refer to “Usage Examples” vignette for details on these and other settings.
 ```r
 library(bistablehistory)
 library(tidyverse)
@@ -134,7 +134,7 @@ kde_fit <- fit_cumhist(kde,
 
 ```
 
-Models fits can be compared via information criteria. Specifically, the log likelihood is stored in a `log_lik` parameter that can be directly using `loo::extract_log_lik()` function (see package [@@loo]) or used to compute either a leave-one-out cross-validation (via `loo()` convenience function) or WAIC (via `waic()`). These are information criteria that can be used for model comparison the same way as Akaike (AIC), Bayesian (BIC), or deviance (DIC) information criteria. The latter can also be computed from log likehood, however, WAIC and LOOCV are both recommended for multi-level models, see [@loo]. The model comparison itself can be performed via `loo::loo_compare()` function of the `loo` package.
+Models fits can be compared via information criteria. Specifically, the log-likelihood is stored in a `log_lik` parameter that can be directly using `loo::extract_log_lik()` function (see package [@@loo]) or used to compute either a leave-one-out cross-validation (via `loo()` convenience function) or WAIC (via `waic()`). These are information criteria that can be used for model comparison the same way as Akaike (AIC), Bayesian (BIC), or deviance (DIC) information criteria. The latter can also be computed from log-likelihood, but WAIC and LOOCV are both recommended for multi-level models, see [@loo]. The model comparison itself can be performed via `loo::loo_compare()` function from the `loo` package.
 
 ```r
 library(loo)
