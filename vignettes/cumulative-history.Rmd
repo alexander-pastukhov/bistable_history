@@ -81,6 +81,7 @@ ggplot(df, aes(x=t, y=h, color=Parameters)) +
   geom_line() + 
   xlab("dt [s]") +
   ylab("h(t + Δt)") + 
+  ylab("h(t + \u0394t)") + 
   ylim(0, 1) + 
   theme(legend.position="top")
 ```
