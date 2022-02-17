@@ -1,6 +1,9 @@
 # Cumulative History Analysis For Bistable Perception Time Series
 
+<!-- badges: start -->
 [![DOI](https://zenodo.org/badge/299245172.svg)](https://zenodo.org/badge/latestdoi/299245172)
+[![CRAN status](https://www.r-pkg.org/badges/version/bistablehistory)](https://cran.r-project.org/package=bistablehistory)
+<!-- badges: end -->
 
 A package to compute a cumulative history for time-series of perceptual
 dominance in bistable displays.
