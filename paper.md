@@ -134,7 +134,7 @@ kde_fit <- fit_cumhist(kde,
 
 ```
 
-Models fits can be compared via information criteria. Specifically, the log-likelihood is stored in a `log_lik` parameter that can be directly using `loo::extract_log_lik()` function (see package [@@loo]) or used to compute either a leave-one-out cross-validation (via `loo()` convenience function) or WAIC (via `waic()`). These are information criteria that can be used for model comparison the same way as Akaike (AIC), Bayesian (BIC), or deviance (DIC) information criteria. The latter can also be computed from log-likelihood, but WAIC and LOOCV are both recommended for multi-level models, see [@loo]. The model comparison itself can be performed via `loo::loo_compare()` function from the `loo` package.
+Models fits can be compared via information criteria. Specifically, the log-likelihood is stored in a `log_lik` parameter that can be directly using `loo::extract_log_lik()` function (see package [@loo_package]) or used to compute either a leave-one-out cross-validation (via `loo()` convenience function) or WAIC (via `waic()`). These are information criteria that can be used for model comparison the same way as Akaike (AIC), Bayesian (BIC), or deviance (DIC) information criteria. The latter can also be computed from log-likelihood, but WAIC and LOOCV are both recommended for multi-level models, see [@loo]. The model comparison itself can be performed via `loo::loo_compare()` function from the `loo` package.
 
 ```r
 library(loo)
