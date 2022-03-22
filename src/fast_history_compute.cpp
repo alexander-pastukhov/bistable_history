@@ -2,9 +2,18 @@
 #include <math.h>
 using namespace Rcpp;
 
+// distributions
 const int L_GAMMA = 1;
 const int L_LOGNORMAL = 2;
 const int L_NORMAL = 3;
+
+// history options
+const int H_DIFFERENCE = -1; // H_OTHER - H_SAME
+const int H_DOMINANT = -2;
+const int H_SUPPRESSED = -3;
+const int H_1 = -4; // history for the first percept (index 1)
+const int H_2 = -5; // history for the second percept (index 2)
+
 
 NumericMatrix state_to_signal_levels(double mixed_level){
   NumericMatrix signal_level(2, 3);
@@ -168,6 +177,7 @@ NumericMatrix predict_samples(int family,
 
         // computing mean of the distribution (from its parameters)
         switch (family) {
+        // predicting duration (default mode)
         case L_GAMMA:
           predicted(iSample, iT) = exp(lm_param[0]) * exp(lm_param[1]);
           break;
@@ -176,6 +186,23 @@ NumericMatrix predict_samples(int family,
           break;
         case L_NORMAL:
           predicted(iSample, iT) = lm_param[0];
+          break;
+
+        // predicting history
+        case H_DIFFERENCE:
+          predicted(iSample, iT) = dH;
+          break;
+        case H_DOMINANT:
+          predicted(iSample, iT) = current_history[istate[iT]];
+          break;
+        case H_SUPPRESSED:
+          predicted(iSample, iT) = current_history[1 - istate[iT]];
+          break;
+        case H_1:
+          predicted(iSample, iT) = current_history[0];
+          break;
+        case H_2:
+          predicted(iSample, iT) = current_history[1];
           break;
         }
       }
