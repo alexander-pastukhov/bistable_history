@@ -160,10 +160,34 @@ The $\mu$ parameter is computed via a linear model. Priors for the intercept are
 ## Model comparison
 Models fits can be compared via information criteria. Specifically, the log likelihood is stored in a `log_lik` parameter that can be directly using `loo::extract_log_lik()` function (see package [@@loo]) or used to compute either a leave-one-out cross-validation (via `loo()` convenience function) or WAIC (via `waic()`). These are information criteria that can be used for model comparison the same way as Akaike (AIC), Bayesian (BIC), or deviance (DIC) information criteria. The latter can also be computed from log likelihood, however, WAIC and LOOCV are both preferred for multi-level models, see [@Vehtari2017]. The model comparison itself can be performed via `loo::loo_compare()` function of the `loo` package.
 
-## Computing and using cumulative history
-If you are interested in the cumulative history itself, you can extract from the fitted object via `extract_history()` function
+## Predicted values
+You can predict durations for individual dominance phases via `predict()` function. You have an option of getting a summary (an average expected duration plus an optional credible interval) or computing predicted durations for every sample.
+
+For summary statistics with 89% credible interval.
 ```{r eval=FALSE}
-H <- extract_history(gam_fit)
+predictions <- predict(gam_fit, summary = TRUE, probs = c((1-0.89)/2, 1 - (1-0.89)/2))
+```
+
+Predictions for every sample for _full length time-series_ (invalid samples are filled with `NA`):
+```{r eval=FALSE}
+prediction_samples <- predict(gam_fit, summary = FALSE, full_length = TRUE)
+```
+
+Predictions for every sample only for valid samples:
+```{r eval=FALSE}
+prediction_samples <- predict(gam_fit, summary = FALSE, full_length = FALSE)
+```
+
+## Computing and using cumulative history
+If you are interested in the cumulative history itself, you can extract from the fitted object via `predict_history()` function. Note that there are five different history types you can extract:
+
+* `"1"`:  cumulative history for the first perceptual state, i.e., state with index of 1.
+* `"2"`:  cumulative history for the second perceptual state, i.e., state with index of 2.
+* `"dominant"`:  for the state that is dominant during the following phase.
+* `"suppressed"`: for the state that is suppressed during the following phase.
+* `"difference"`: difference between cumulative histories ($\Delta h = h_{suppressed} - h{dominant}$), which is used in linear models.
+```{r eval=FALSE}
+H <- predict_history(gam_fit, "difference")
 ```
 
 Alternatively, you can skip fitting and compute history directly using predefined values via `compute_history()`.
