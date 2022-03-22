@@ -4,7 +4,14 @@
 \alias{predict.cumhist}
 \title{Computes predicted dominance phase durations using posterior predictive distribution.}
 \usage{
-\method{predict}{cumhist}(object, summary = TRUE, probs = NULL, full_length = TRUE, ...)
+\method{predict}{cumhist}(
+  object,
+  summary = TRUE,
+  probs = NULL,
+  full_length = TRUE,
+  predict_history = NULL,
+  ...
+)
 }
 \arguments{
 \item{object}{An object of class \link[=cumhist-class]{cumhist}}
@@ -18,18 +25,24 @@ raw sample values. Defaults to \code{TRUE}}
 include rows with no predictions. I.e., rows with mixed phases, first/last dominance
 phase in the run, etc. See \code{\link[=preprocess_data]{preprocess_data()}}. Defaults to \code{TRUE}.}
 
+\item{predict_history}{Option to predict a cumulative history state (or their difference).
+It is disabled by default by setting it to \code{NULL}. You can specify \code{"1"} or \code{"2"}
+for cumulative history for the first or second perceptual states (with indexes 1 and 2, respectively),
+\code{"dominant"} or \code{"suppressed"} for cumulative history for states that either dominant
+or suppressed during the following phase, \code{"difference"} for difference between suppressed
+and dominant. See cumulative history vignette for details.}
+
 \item{...}{Unused}
 }
 \value{
 If \code{summary=FALSE}, a numeric matrix iterationsN x clearN.
-If \code{summary=TRUE} but \code{probs=NULL} a vector of mean predicted durations.
+If \code{summary=TRUE} but \code{probs=NULL} a vector of mean predicted durations
+or requested cumulative history values.
 If \code{summary=TRUE} and \code{probs} is not \code{NULL}, a data.frame
 with a column \emph{"Predicted"} (mean) and a column for each specified quantile.
 }
 \description{
-Computes predicted dominance phase durations using fitted model. Returns predicted
-values only for the dominance phases that were marked for use. I.e., excluding first
-and last dominance phases, mixed phases, etc. See \code{\link[=preprocess_data]{preprocess_data()}}.
+Computes predicted dominance phase durations using fitted model.
 }
 \examples{
 \donttest{

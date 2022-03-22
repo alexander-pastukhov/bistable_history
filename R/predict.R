@@ -1,8 +1,6 @@
 #' Computes predicted dominance phase durations using posterior predictive distribution.
 #'
-#' Computes predicted dominance phase durations using fitted model. Returns predicted
-#' values only for the dominance phases that were marked for use. I.e., excluding first
-#' and last dominance phases, mixed phases, etc. See [preprocess_data()].
+#' Computes predicted dominance phase durations using fitted model.
 #'
 #' @param object An object of class [cumhist][cumhist-class()]
 #' @param summary Whether summary statistics should be returned instead of
@@ -11,10 +9,17 @@
 #' @param full_length Only for \code{summary = TRUE}, whether the summary table should
 #' include rows with no predictions. I.e., rows with mixed phases, first/last dominance
 #' phase in the run, etc. See [preprocess_data()]. Defaults to \code{TRUE}.
+#' @param predict_history Option to predict a cumulative history state (or their difference).
+#' It is disabled by default by setting it to \code{NULL}. You can specify \code{"1"} or \code{"2"}
+#' for cumulative history for the first or second perceptual states (with indexes 1 and 2, respectively),
+#' \code{"dominant"} or \code{"suppressed"} for cumulative history for states that either dominant
+#' or suppressed during the following phase, \code{"difference"} for difference between suppressed
+#' and dominant. See cumulative history vignette for details.
 #' @param ... Unused
 #'
 #' @return If \code{summary=FALSE}, a numeric matrix iterationsN x clearN.
-#' If \code{summary=TRUE} but \code{probs=NULL} a vector of mean predicted durations.
+#' If \code{summary=TRUE} but \code{probs=NULL} a vector of mean predicted durations
+#' or requested cumulative history values.
 #' If \code{summary=TRUE} and \code{probs} is not \code{NULL}, a data.frame
 #' with a column _"Predicted"_ (mean) and a column for each specified quantile.
 #'
@@ -24,7 +29,6 @@
 #' @importFrom stats quantile predict na.omit
 #' @importFrom tibble tibble as_tibble
 #'
-#' @method predict cumhist
 #' @export
 #'
 #' @seealso \code{\link{fit_cumhist}}
@@ -36,7 +40,12 @@
 #' # full posterior prediction samples
 #' predictions_samples <- predict(br_fit, summary=FALSE)
 #' }
-predict.cumhist <-  function(object, summary = TRUE, probs = NULL, full_length = TRUE, ...) {
+predict.cumhist <-  function(object,
+                             summary = TRUE,
+                             probs = NULL,
+                             full_length = TRUE,
+                             predict_history = NULL,
+                             ...) {
   if (is.null(object$stanfit)) stop("The object has no fitted stan model")
 
   # extracting history effects
@@ -71,9 +80,23 @@ predict.cumhist <-  function(object, summary = TRUE, probs = NULL, full_length =
     bF <- matrix(rep(0, nrow(a)), ncol=1)
   }
 
+  # what are we going to return?
+  if (is.null(predict_history)) {
+    family_or_history <- object$data$family
+  } else {
+    history_constants <- c("difference" = -1,
+                           "dominant" = -2,
+                           "suppressed" = -3,
+                           "1" = -4,
+                           "2" = -5)
+    if (!(predict_history %in% names(history_constants))) stop("Unknown predict_history option.")
+    family_or_history <- history_constants[predict_history]
+  }
+
+
   # predicting all samples
-  predictions <- predict_samples(object$data$family,     # dimensions
-                                 object$data$fixedN,
+  predictions <- predict_samples(family_or_history,
+                                 object$data$fixedN,     # dimensions
                                  object$data$randomN,
                                  object$data$lmN,
                                  object$data$istate - 1, # data
@@ -129,4 +152,3 @@ predict.cumhist <-  function(object, summary = TRUE, probs = NULL, full_length =
     return(na.omit(predictions_summary))
   }
 }
-
