@@ -40,7 +40,7 @@
     
     <a class="navbar-brand me-2" href="index.html">bistablehistory</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -87,31 +87,58 @@
 </h1></div>
 <!-- badges: start -->
 
-<p>A package to compute a cumulative history for time-series of perceptual dominance in bistable displays.</p>
-<p>Estimates cumulative history, an estimate of accumulating adaptation/prediction error for the dominant percept, for time-series for continuously viewed bistable perceptual rivalry displays. Computes cumulative history via a homogeneous first order differential process. I.e., it assumes exponential growth/decay of the history as a function of time and perceptually dominant state. Supports Gamma, log normal, and normal distribution families.</p>
-<p>For details on rationale please refer to (<a href="https://doi.org/10.1167/11.10.12" class="external-link">Pastukhov &amp; Braun, 2011</a>).</p>
+<p>A package to compute a cumulative history for time-series of
+perceptual dominance in bistable displays.</p>
+<p>Estimates cumulative history, an estimate of accumulating
+adaptation/prediction error for the dominant percept, for time-series
+for continuously viewed bistable perceptual rivalry displays. Computes
+cumulative history via a homogeneous first order differential process.
+I.e., it assumes exponential growth/decay of the history as a function
+of time and perceptually dominant state. Supports Gamma, log normal, and
+normal distribution families.</p>
+<p>For details on rationale please refer to (<a href="https://doi.org/10.1167/11.10.12" class="external-link">Pastukhov &amp; Braun,
+2011</a>).</p>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
 <p>For current stable version use</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"bistablehistory"</span><span class="op">)</span></code></pre></div>
-<p>The master branch is the development version. To install it please use</p>
+<p>The master branch is the development version. To install it please
+use</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="st"><a href="https://devtools.r-lib.org/" class="external-link">"devtools"</a></span><span class="op">)</span>
 <span class="fu"><a href="https://devtools.r-lib.org/reference/remote-reexports.html" class="external-link">install_github</a></span><span class="op">(</span><span class="st">"alexander-pastukhov/bistablehistory"</span>, dependencies <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <div class="section level3">
 <h3 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a>
 </h3>
-<p>This package uses <a href="https://mc-stan.org" class="external-link">Stan</a>, a “state-of-the-art platform for statistical modeling and high-performance statistical computation”. Therefore, it depends on the package <a href="https://cran.r-project.org/package=rstantools" class="external-link">rstantools</a>, which in turn depends on the <a href="https://cran.r-project.org/package=rstan" class="external-link">rstan</a> package, which uses the <a href="https://v8.dev" class="external-link">V8 JavaScript library</a>, through the <a href="https://cran.r-project.org/package=V8" class="external-link">V8 R package</a>.</p>
-<p>Therefore, you will need to install the V8 JavaScript library on your system, and it is recommended that you also install the V8 R package beforehand. For detailed instructions, please see <a href="https://github.com/jeroen/v8" class="external-link uri">https://github.com/jeroen/v8</a>.</p>
-<p>You will also need the <a href="https://cran.r-project.org/package=curl" class="external-link">R package curl</a>, which depends on <code>libcurl-*</code> in various operating systems. Please see the documentation at <a href="https://cran.r-project.org/package=curl" class="external-link uri">https://cran.r-project.org/package=curl</a>.</p>
+<p>This package uses <a href="https://mc-stan.org" class="external-link">Stan</a>, a
+“state-of-the-art platform for statistical modeling and high-performance
+statistical computation”. Therefore, it depends on the package <a href="https://cran.r-project.org/package=rstantools" class="external-link">rstantools</a>,
+which in turn depends on the <a href="https://cran.r-project.org/package=rstan" class="external-link">rstan</a> package, which
+uses the <a href="https://v8.dev" class="external-link">V8 JavaScript library</a>, through the
+<a href="https://cran.r-project.org/package=V8" class="external-link">V8 R package</a>.</p>
+<p>Therefore, you will need to install the V8 JavaScript library on your
+system, and it is recommended that you also install the V8 R package
+beforehand. For detailed instructions, please see <a href="https://github.com/jeroen/v8" class="external-link uri">https://github.com/jeroen/v8</a>.</p>
+<p>You will also need the <a href="https://cran.r-project.org/package=curl" class="external-link">R package curl</a>, which
+depends on <code>libcurl-*</code> in various operating systems. Please
+see the documentation at <a href="https://cran.r-project.org/package=curl" class="external-link uri">https://cran.r-project.org/package=curl</a>.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a>
 </h2>
-<p>The main function is <code>fit_cumhist</code> that takes a data frame with time-series as the first argument. Minimally, you need to specify <code>state</code> — string with the column name that encodes perceptually dominant state — and either <code>duration</code> (column name with duration of individual dominance phases) or <code>onset</code> (column name with onset times of individual dominance phases). Thus, for a simplest case of a single subject and single run/block measurement with all defaults (gamma distribution, fitted cumulative history time constant but fixed mixed state value and history mixing proportion) the call would be</p>
+<p>The main function is <code>fit_cumhist</code> that takes a data frame
+with time-series as the first argument. Minimally, you need to specify
+<code>state</code> — string with the column name that encodes
+perceptually dominant state — and either <code>duration</code> (column
+name with duration of individual dominance phases) or <code>onset</code>
+(column name with onset times of individual dominance phases). Thus, for
+a simplest case of a single subject and single run/block measurement
+with all defaults (gamma distribution, fitted cumulative history time
+constant but fixed mixed state value and history mixing proportion) the
+call would be</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/alexander-pastukhov/bistablehistory" class="external-link">bistablehistory</a></span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/utils/data.html" class="external-link">data</a></span><span class="op">(</span><span class="va">br_singleblock</span><span class="op">)</span>
@@ -125,13 +152,18 @@
 <span class="va">gamma_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/fit_cumhist.html">fit_cumhist</a></span><span class="op">(</span><span class="va">br_singleblock</span>,
                          state <span class="op">=</span> <span class="st">"State"</span>,
                          onset <span class="op">=</span> <span class="st">"Time"</span><span class="op">)</span></code></pre></div>
-<p>Now you can look at the fitted value for history time constant via</p>
+<p>Now you can look at the fitted value for history time constant
+via</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="reference/history_tau.html">history_tau</a></span><span class="op">(</span><span class="va">gamma_fit</span><span class="op">)</span></code></pre></div>
-<p>and main effect of history for both parameters of gamma distribution</p>
+<p>and main effect of history for both parameters of gamma
+distribution</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/stats/coef.html" class="external-link">coef</a></span><span class="op">(</span><span class="va">gamma_fit</span><span class="op">)</span></code></pre></div>
-<p>For further details please see vignettes on package usage (<a href="https://CRAN.R-project.org/package=bistablehistory/vignettes/usage-examples.html" class="external-link">Usage examples</a> and <a href="https://CRAN.R-project.org/package=bistablehistory/vignettes/cumulative-history.html" class="external-link">Cumulative history</a>) and on an example of writing Stan code directly (<a href="https://CRAN.R-project.org/package=bistablehistory/vignettes/writing-stan-code.html" class="external-link">Writing Stan code</a>).</p>
+<p>For further details please see vignettes on package usage (<a href="https://CRAN.R-project.org/package=bistablehistory/vignettes/usage-examples.html" class="external-link">Usage
+examples</a> and <a href="https://CRAN.R-project.org/package=bistablehistory/vignettes/cumulative-history.html" class="external-link">Cumulative
+history</a>) and on an example of writing Stan code directly (<a href="https://CRAN.R-project.org/package=bistablehistory/vignettes/writing-stan-code.html" class="external-link">Writing
+Stan code</a>).</p>
 </div>
 </div>
   </main><aside class="col-md-3"><div class="links">
@@ -181,12 +213,15 @@
 
     <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by <a href="https://alexander-pastukhov.github.io/" class="external-link">Alexander Pastukhov</a>.</p>
+<p>Developed by
+<a href="https://alexander-pastukhov.github.io/" class="external-link">Alexander
+Pastukhov</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.</p>
 </div>
 
     </footer>

@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">bistablehistory</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -85,7 +85,16 @@
 <div class="section level2">
 <h2 id="minimal-example">Minimal example<a class="anchor" aria-label="anchor" href="#minimal-example"></a>
 </h2>
-<p>The main function is <code><a href="../reference/fit_cumhist.html">fit_cumhist()</a></code> that takes a data frame with time-series as a first argument. In addition, you need to specify the name of the column that codes the perceptual state (<code>state</code> argument) and a column that holds either dominance phase duration (<code>duration</code>) or its onset (<code>onset</code>). The code below fits data using Gamma distribution (default family) for a single run of a single participant. By default, the function fits cumulative history time constant but uses default fixed mixed state value (<code>mixed_state = 0.5</code>) and initial history values (<code>history_init = 0</code>).</p>
+<p>The main function is <code><a href="../reference/fit_cumhist.html">fit_cumhist()</a></code> that takes a data
+frame with time-series as a first argument. In addition, you need to
+specify the name of the column that codes the perceptual state
+(<code>state</code> argument) and a column that holds either dominance
+phase duration (<code>duration</code>) or its onset
+(<code>onset</code>). The code below fits data using Gamma distribution
+(default family) for a single run of a single participant. By default,
+the function fits cumulative history time constant but uses default
+fixed mixed state value (<code>mixed_state = 0.5</code>) and initial
+history values (<code>history_init = 0</code>).</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/alexander-pastukhov/bistablehistory" class="external-link">bistablehistory</a></span><span class="op">)</span>
 
@@ -94,27 +103,32 @@
                          state<span class="op">=</span><span class="st">"State"</span>,
                          duration<span class="op">=</span><span class="st">"Duration"</span>,
                          refresh<span class="op">=</span><span class="fl">0</span><span class="op">)</span></code></pre></div>
-<p>Alternatively, you specify <em>onset</em> of individual dominance phases that will be used to compute their duration.</p>
+<p>Alternatively, you specify <em>onset</em> of individual dominance
+phases that will be used to compute their duration.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">gamma_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_cumhist.html">fit_cumhist</a></span><span class="op">(</span><span class="va">br_singleblock</span>,
                         state<span class="op">=</span><span class="st">"State"</span>,
                         onset<span class="op">=</span><span class="st">"Time"</span><span class="op">)</span></code></pre></div>
-<p>You can look at the fitted value for history time constant using <code><a href="../reference/history_tau.html">history_tau()</a></code></p>
+<p>You can look at the fitted value for history time constant using
+<code><a href="../reference/history_tau.html">history_tau()</a></code></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/history_tau.html">history_tau</a></span><span class="op">(</span><span class="va">gamma_fit</span><span class="op">)</span>
 <span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 x 3</span></span>
 <span class="co">#&gt;   Estimate `5.5%` `94.5%`</span>
 <span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span>    0.989  0.776    1.23</span></code></pre></div>
-<p>and main effect of history for both parameters of gamma distribution</p>
+<span class="co">#&gt; <span style="color: #BCBCBC;">1</span>    0.995  0.773    1.23</span></code></pre></div>
+<p>and main effect of history for both parameters of gamma
+distribution</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/historyef.html">historyef</a></span><span class="op">(</span><span class="va">gamma_fit</span><span class="op">)</span>
 <span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 x 4</span></span>
-<span class="co">#&gt;   DistributionParameter Estimate `5.5%` `94.5%`</span>
-<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> shape                    1.02   0.154    1.90</span>
-<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> scale                    0.311 -<span style="color: #BB0000;">0.695</span>    1.27</span></code></pre></div>
-<p>The following model is fitted for the example above, see also <a href="cumulative-history.html">companion vignette</a> for details on cumulative history computation. <span class="math display">\[Duration[i] \sim  Gamma(shape[i], rate[i]) \\
+<span class="co">#&gt;   DistributionParameter Estimate  `5.5%` `94.5%`</span>
+<span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">1</span> shape                    0.985  0.066<span style="text-decoration: underline;">3</span>    1.94</span>
+<span class="co">#&gt; <span style="color: #BCBCBC;">2</span> scale                    0.350 -<span style="color: #BB0000;">0.724</span>     1.42</span></code></pre></div>
+<p>The following model is fitted for the example above, see also <a href="cumulative-history.html">companion vignette</a> for details on
+cumulative history computation. <span class="math display">\[Duration[i]
+\sim  Gamma(shape[i], rate[i]) \\
 log(shape[i]) = \alpha^{shape} + \beta^{shape}_H \cdot \Delta h[i] \\
 log(rate[i]) = \alpha^{rate} + \beta^{rate}_H \cdot \Delta h[i] \\
 \Delta h[i] = \text{cumulative_history}(\tau, \text{history_init})\\
@@ -125,19 +139,26 @@ log(rate[i]) = \alpha^{rate} + \beta^{rate}_H \cdot \Delta h[i] \\
 <div class="section level2">
 <h2 id="passing-stan-control-parameters">Passing Stan control parameters<a class="anchor" aria-label="anchor" href="#passing-stan-control-parameters"></a>
 </h2>
-<p>You can pass Stan control parameters via <code>control</code> argument, e.g.,</p>
+<p>You can pass Stan control parameters via <code>control</code>
+argument, e.g.,</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">gamma_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_cumhist.html">fit_cumhist</a></span><span class="op">(</span><span class="va">br_singleblock</span>,
                         state<span class="op">=</span><span class="st">"State"</span>,
                         duration<span class="op">=</span><span class="st">"Duration"</span>,
                         control<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>max_treedepth <span class="op">=</span> <span class="fl">15</span>,
                                      adapt_delta <span class="op">=</span> <span class="fl">0.99</span><span class="op">)</span><span class="op">)</span></code></pre></div>
-<p>See Stan documentation for details <span class="citation">(Carpenter et al. 2017)</span>.</p>
+<p>See Stan documentation for details <span class="citation">(Carpenter
+et al. 2017)</span>.</p>
 </div>
 <div class="section level2">
 <h2 id="run">Run<a class="anchor" aria-label="anchor" href="#run"></a>
 </h2>
-<p>By default, <code><a href="../reference/fit_cumhist.html">fit_cumhist()</a></code> function assumes that the time-series represent a single run, so that history states are initialized only once at the very beginning. You can use <code>run</code> argument to pass the name of a column that specifies individual runs. In this case, history is initialized at the beginning of every run to avoid spill-over effects.</p>
+<p>By default, <code><a href="../reference/fit_cumhist.html">fit_cumhist()</a></code> function assumes that the
+time-series represent a single run, so that history states are
+initialized only once at the very beginning. You can use
+<code>run</code> argument to pass the name of a column that specifies
+individual runs. In this case, history is initialized at the beginning
+of every run to avoid spill-over effects.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">gamma_fit</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/fit_cumhist.html">fit_cumhist</a></span><span class="op">(</span><span class="va">br_single_subject</span>,
                         state<span class="op">=</span><span class="st">"State"</span>,
@@ -147,12 +168,29 @@ log(rate[i]) = \alpha^{rate} + \beta^{rate}_H \cdot \Delta h[i] \\
 <div class="section level2">
 <h2 id="experimental-session">Experimental session<a class="anchor" aria-label="anchor" href="#experimental-session"></a>
 </h2>
-<p>Experimental session specifies which time-series were measured together and is used to compute an average dominance phase duration that, in turn, is used when computing cumulative history: <span class="math inline">\(\tau_H = \tau \cdot &lt;D&gt;\)</span>, where <span class="math inline">\(\tau\)</span> is normalized time constant and <span class="math inline">\(&lt;D&gt;\)</span> is the mean dominance phase duration. This can be used to account for changes in overall alternation rate between different sessions (days), as, for example, participants new to the stimuli tend to “speed up” over the course of days <span class="citation">(Suzuki and Grabowecky 2007)</span>. If you <em>do not</em> specify <code>session</code> parameter then a single mean dominance phase duration is computed for all runs of a single subject.</p>
+<p>Experimental session specifies which time-series were measured
+together and is used to compute an average dominance phase duration
+that, in turn, is used when computing cumulative history: <span class="math inline">\(\tau_H = \tau \cdot &lt;D&gt;\)</span>, where
+<span class="math inline">\(\tau\)</span> is normalized time constant
+and <span class="math inline">\(&lt;D&gt;\)</span> is the mean dominance
+phase duration. This can be used to account for changes in overall
+alternation rate between different sessions (days), as, for example,
+participants new to the stimuli tend to “speed up” over the course of
+days <span class="citation">(Suzuki and Grabowecky 2007)</span>. If you
+<em>do not</em> specify <code>session</code> parameter then a single
+mean dominance phase duration is computed for all runs of a single
+subject.</p>
 </div>
 <div class="section level2">
 <h2 id="random-effect">Random effect<a class="anchor" aria-label="anchor" href="#random-effect"></a>
 </h2>
-<p>The <code>random_effect</code> argument allows you to specify a name of the column that codes for a random effect, e.g., participant identity, bistable display (if different displays were used for a single participant), etc. If specified, it is used to fit a hierarchical model with random slopes for the <em>history effect</em> (<span class="math inline">\(\beta_H\)</span>). Note that we if random <em>independent</em> intercepts are used as prior research suggest large differences in overall alternation rate between participants <span class="citation">(Brascamp et al. 2019)</span>.</p>
+<p>The <code>random_effect</code> argument allows you to specify a name
+of the column that codes for a random effect, e.g., participant
+identity, bistable display (if different displays were used for a single
+participant), etc. If specified, it is used to fit a hierarchical model
+with random slopes for the <em>history effect</em> (<span class="math inline">\(\beta_H\)</span>). Note that we if random
+<em>independent</em> intercepts are used as prior research suggest large
+differences in overall alternation rate between participants <span class="citation">(Brascamp et al. 2019)</span>.</p>
 <p>Here, is the R code that specifies participants as random effect</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">gamma_fit</span> <span class="op">&lt;-</span>  <span class="fu"><a href="../reference/fit_cumhist.html">fit_cumhist</a></span><span class="op">(</span><span class="va">kde_two_observers</span>,
@@ -160,8 +198,13 @@ log(rate[i]) = \alpha^{rate} + \beta^{rate}_H \cdot \Delta h[i] \\
                           duration<span class="op">=</span><span class="st">"Duration"</span>,
                           random_effect<span class="op">=</span><span class="st">"Observer"</span>,
                           run<span class="op">=</span><span class="st">"Block"</span><span class="op">)</span></code></pre></div>
-<p>And here is the corresponding model, specified for the shape parameter only as identical formulas are used for the rate parameter as well. Here, <span class="math inline">\(R_i\)</span> codes for a random effect level (participant identity) and a non-centered parametrization is used for the pooled random slopes.</p>
-<p><span class="math display">\[Duration[i] \sim  Gamma(shape[i], rate[i]) \\
+<p>And here is the corresponding model, specified for the shape
+parameter only as identical formulas are used for the rate parameter as
+well. Here, <span class="math inline">\(R_i\)</span> codes for a random
+effect level (participant identity) and a non-centered parametrization
+is used for the pooled random slopes.</p>
+<p><span class="math display">\[Duration[i] \sim  Gamma(shape[i],
+rate[i]) \\
 log(shape[i]) = \alpha[R_i] + \beta_H[R_i] \cdot \Delta h[i] \\
 \Delta H[i] = \text{cumulative_history}(\tau, \text{history_init})\\
 \alpha[R_i] \sim Normal(log(3), 5) \\
@@ -170,79 +213,180 @@ log(shape[i]) = \alpha[R_i] + \beta_H[R_i] \cdot \Delta h[i] \\
 \beta^{z}_H[R_i] \sim Normal(0, 1) \\
 \sigma^{pop}_H \sim Exponential(1) \\
 \tau \sim Normal(log(1), 0.15)\]</span></p>
-<p>Identical approach is take for <span class="math inline">\(\tau\)</span>, if <code>tau=' "1|random"'</code> was specified and same holds for <code>mixed_state=' "1|random"'</code> argument, see below.</p>
+<p>Identical approach is take for <span class="math inline">\(\tau\)</span>, if <code>tau=' "1|random"'</code>
+was specified and same holds for <code>mixed_state=' "1|random"'</code>
+argument, see below.</p>
 </div>
 <div class="section level2">
 <h2 id="fixed-effects">Fixed effects<a class="anchor" aria-label="anchor" href="#fixed-effects"></a>
 </h2>
-<p><code><a href="../reference/fit_cumhist.html">fit_cumhist()</a></code> functions allows you to specify multiple fixed effect terms as a vector of strings. The implementation is restricted to:</p>
+<p><code><a href="../reference/fit_cumhist.html">fit_cumhist()</a></code> functions allows you to specify multiple
+fixed effect terms as a vector of strings. The implementation is
+restricted to:</p>
 <ul>
 <li>Only continuous (metric) independent variables should be used.</li>
-<li>A single value is fitted for each main effect, irrespective of whether a random effect was specified.</li>
-<li>You cannot specify an interaction either between fixed effects or between a fixed effect and cumulative history variable.</li>
+<li>A single value is fitted for each main effect, irrespective of
+whether a random effect was specified.</li>
+<li>You cannot specify an interaction either between fixed effects or
+between a fixed effect and cumulative history variable.</li>
 </ul>
-<p>Although this limits usability of the fixed effects, these restrictions allowed for both a simpler model specification and a simpler underlying code. If you do require more complex models, please refer to <a href="writing-stan-code.html">companion vignette</a> that provides an example on writing model using Stan directly.</p>
-<p>You can specify custom priors (a mean and a standard deviation of a prior normal distribution) via <code>history_effect_prior</code> and <code>fixed_effects_priors</code> arguments. The former accepts a vector with mean and standard deviation, whereas the latter takes a named list in format .</p>
-<p>Once fitted, you can use <code><a href="../reference/fixef.html">fixef()</a></code> function to extract a posterior distribution or its summary for each effect.</p>
+<p>Although this limits usability of the fixed effects, these
+restrictions allowed for both a simpler model specification and a
+simpler underlying code. If you do require more complex models, please
+refer to <a href="writing-stan-code.html">companion vignette</a> that
+provides an example on writing model using Stan directly.</p>
+<p>You can specify custom priors (a mean and a standard deviation of a
+prior normal distribution) via <code>history_effect_prior</code> and
+<code>fixed_effects_priors</code> arguments. The former accepts a vector
+with mean and standard deviation, whereas the latter takes a named list
+in format .</p>
+<p>Once fitted, you can use <code><a href="../reference/fixef.html">fixef()</a></code> function to extract a
+posterior distribution or its summary for each effect.</p>
 </div>
 <div class="section level2">
 <h2 id="cumulative-history-parameters">Cumulative history parameters<a class="anchor" aria-label="anchor" href="#cumulative-history-parameters"></a>
 </h2>
-<p><code><a href="../reference/fit_cumhist.html">fit_cumhist()</a></code> function takes three parameters for cumulative history computation (see also <a href="cumulative-history.html">companion vignette</a>):</p>
+<p><code><a href="../reference/fit_cumhist.html">fit_cumhist()</a></code> function takes three parameters for
+cumulative history computation (see also <a href="cumulative-history.html">companion vignette</a>):</p>
 <ul>
 <li>
-<code>tau</code> : a <em>normalized</em> time constant in units of mean dominance phase duration.</li>
+<code>tau</code> : a <em>normalized</em> time constant in units of
+mean dominance phase duration.</li>
 <li>
-<code>mixed_state</code> : value used for mixed/transition state phases, defaults to <code>0.5</code>.</li>
+<code>mixed_state</code> : value used for mixed/transition state
+phases, defaults to <code>0.5</code>.</li>
 <li>
-<code>history_init</code> : an initial value for cumulative history at the onset of each run. Defaults to <code>0</code>.</li>
+<code>history_init</code> : an initial value for cumulative history
+at the onset of each run. Defaults to <code>0</code>.</li>
 </ul>
-<p>Note that although <code>history_init</code> accepts only fixed values either a single value used for both states or a vector of two. In contrast, both fixed and fitted values can be used for the other three parameters. Here are possible function argument values</p>
+<p>Note that although <code>history_init</code> accepts only fixed
+values either a single value used for both states or a vector of two. In
+contrast, both fixed and fitted values can be used for the other three
+parameters. Here are possible function argument values</p>
 <ul>
-<li>a single positive number for <code>tau</code> or single number within [0, 1] range for <code>mixed_state</code>. In this case, the value is used directly for the cumulative history computation, which is default option for <code>mixed_state</code>.</li>
+<li>a single positive number for <code>tau</code> or single number
+within [0, 1] range for <code>mixed_state</code>. In this case, the
+value is used directly for the cumulative history computation, which is
+default option for <code>mixed_state</code>.</li>
 <li>
-<code>NULL</code> : a single value is fitted and used for all participants and runs. This is a default for <code>tau</code>.</li>
+<code>NULL</code> : a single value is fitted and used for all
+participants and runs. This is a default for <code>tau</code>.</li>
 <li>
-<code>'random'</code> : an <em>independent</em> tau is fitted for each random cluster (participant, displays, etc.). <code>random_effect</code> argument must be specified.</li>
+<code>'random'</code> : an <em>independent</em> tau is fitted for
+each random cluster (participant, displays, etc.).
+<code>random_effect</code> argument must be specified.</li>
 <li>
-<code>'1|random'</code> : values for individual random cluster are sampled from a fitted population distribution (<em>pooled</em> values). <code>random_effect</code> argument must be specified.</li>
+<code>'1|random'</code> : values for individual random cluster are
+sampled from a fitted population distribution (<em>pooled</em> values).
+<code>random_effect</code> argument must be specified.</li>
 </ul>
-<p>You can specify custom priors for each cumulative history parameter via <code>history_priors</code> argument by specifying mean and standard deviation of a prior normal distribution. The <code>history_priors</code> argument must be a named list, , e.g., <code>history_priors = list("tau"=c(1, 0.15))</code>.</p>
-<p>Once fitted, you can use <code><a href="../reference/history_tau.html">history_tau()</a></code> and <code><a href="../reference/history_mixed_state.html">history_mixed_state()</a></code>functions to obtain a posterior distribution or its summary for each parameter.</p>
+<p>You can specify custom priors for each cumulative history parameter
+via <code>history_priors</code> argument by specifying mean and standard
+deviation of a prior normal distribution. The
+<code>history_priors</code> argument must be a named list, , e.g.,
+<code>history_priors = list("tau"=c(1, 0.15))</code>.</p>
+<p>Once fitted, you can use <code><a href="../reference/history_tau.html">history_tau()</a></code> and
+<code><a href="../reference/history_mixed_state.html">history_mixed_state()</a></code>functions to obtain a posterior
+distribution or its summary for each parameter.</p>
 </div>
 <div class="section level2">
 <h2 id="distribution-family">Distribution family<a class="anchor" aria-label="anchor" href="#distribution-family"></a>
 </h2>
-<p><code>fit_cumhist</code> currently supports three distributions: <code>'gamma'</code>, <code>'lognormal'</code>, and <code>'normal'</code>.</p>
+<p><code>fit_cumhist</code> currently supports three distributions:
+<code>'gamma'</code>, <code>'lognormal'</code>, and
+<code>'normal'</code>.</p>
 <div class="section level3">
 <h3 id="gamma">Gamma<a class="anchor" aria-label="anchor" href="#gamma"></a>
 </h3>
-<p><span class="math display">\[Duration[i] \sim Gamma(shape[i], rate[i])\]</span> For Gamma distribution independent linear models with a log link function are fitted for both shape and rate parameter. Priors for intercepts for both parameters are <span class="math inline">\(\alpha ~ Normal(log(3), 5)\)</span>.</p>
+<p><span class="math display">\[Duration[i] \sim Gamma(shape[i],
+rate[i])\]</span> For Gamma distribution independent linear models with
+a log link function are fitted for both shape and rate parameter. Priors
+for intercepts for both parameters are <span class="math inline">\(\alpha ~ Normal(log(3), 5)\)</span>.</p>
 </div>
 <div class="section level3">
 <h3 id="log-normal">Log-normal<a class="anchor" aria-label="anchor" href="#log-normal"></a>
 </h3>
-<p><span class="math display">\[Duration[i] \sim LogNormal(\mu[i], \sigma)\]</span> The <span class="math inline">\(\mu\)</span> parameter is computed via a linear model with a log link function. Priors for the intercept are <span class="math inline">\(\alpha ~ Normal(log(3), 5)\)</span>. Prior for <span class="math inline">\(\sigma\)</span> was <span class="math inline">\(\sigma \sim Exponential(1)\)</span>.</p>
+<p><span class="math display">\[Duration[i] \sim LogNormal(\mu[i],
+\sigma)\]</span> The <span class="math inline">\(\mu\)</span> parameter
+is computed via a linear model with a log link function. Priors for the
+intercept are <span class="math inline">\(\alpha ~ Normal(log(3),
+5)\)</span>. Prior for <span class="math inline">\(\sigma\)</span> was
+<span class="math inline">\(\sigma \sim Exponential(1)\)</span>.</p>
 </div>
 <div class="section level3">
 <h3 id="normal">Normal<a class="anchor" aria-label="anchor" href="#normal"></a>
 </h3>
-<p><span class="math display">\[Duration[i] \sim Normal(\mu[i], \sigma)\]</span> The <span class="math inline">\(\mu\)</span> parameter is computed via a linear model. Priors for the intercept are <span class="math inline">\(\alpha ~ Normal(3, 5)\)</span>. Prior for <span class="math inline">\(\sigma\)</span> was <span class="math inline">\(\sigma \sim Exponential(1)\)</span>.</p>
+<p><span class="math display">\[Duration[i] \sim Normal(\mu[i],
+\sigma)\]</span> The <span class="math inline">\(\mu\)</span> parameter
+is computed via a linear model. Priors for the intercept are <span class="math inline">\(\alpha ~ Normal(3, 5)\)</span>. Prior for <span class="math inline">\(\sigma\)</span> was <span class="math inline">\(\sigma \sim Exponential(1)\)</span>.</p>
 </div>
 </div>
 <div class="section level2">
 <h2 id="model-comparison">Model comparison<a class="anchor" aria-label="anchor" href="#model-comparison"></a>
 </h2>
-<p>Models fits can be compared via information criteria. Specifically, the log likelihood is stored in a <code>log_lik</code> parameter that can be directly using <code><a href="https://mc-stan.org/loo/reference/extract_log_lik.html" class="external-link">loo::extract_log_lik()</a></code> function (see package <span class="citation">(@ <strong>loo?</strong>)</span>) or used to compute either a leave-one-out cross-validation (via <code><a href="https://mc-stan.org/loo/reference/loo.html" class="external-link">loo()</a></code> convenience function) or WAIC (via <code><a href="https://mc-stan.org/loo/reference/waic.html" class="external-link">waic()</a></code>). These are information criteria that can be used for model comparison the same way as Akaike (AIC), Bayesian (BIC), or deviance (DIC) information criteria. The latter can also be computed from log likelihood, however, WAIC and LOOCV are both preferred for multi-level models, see <span class="citation">(Vehtari, Gelman, and Gabry 2017)</span>. The model comparison itself can be performed via <code><a href="https://mc-stan.org/loo/reference/loo_compare.html" class="external-link">loo::loo_compare()</a></code> function of the <code>loo</code> package.</p>
+<p>Models fits can be compared via information criteria. Specifically,
+the log likelihood is stored in a <code>log_lik</code> parameter that
+can be directly using <code><a href="https://mc-stan.org/loo/reference/extract_log_lik.html" class="external-link">loo::extract_log_lik()</a></code> function (see
+package <span class="citation">(@ <strong>loo?</strong>)</span>) or used
+to compute either a leave-one-out cross-validation (via
+<code><a href="https://mc-stan.org/loo/reference/loo.html" class="external-link">loo()</a></code> convenience function) or WAIC (via
+<code><a href="https://mc-stan.org/loo/reference/waic.html" class="external-link">waic()</a></code>). These are information criteria that can be used
+for model comparison the same way as Akaike (AIC), Bayesian (BIC), or
+deviance (DIC) information criteria. The latter can also be computed
+from log likelihood, however, WAIC and LOOCV are both preferred for
+multi-level models, see <span class="citation">(Vehtari, Gelman, and
+Gabry 2017)</span>. The model comparison itself can be performed via
+<code><a href="https://mc-stan.org/loo/reference/loo_compare.html" class="external-link">loo::loo_compare()</a></code> function of the <code>loo</code>
+package.</p>
+</div>
+<div class="section level2">
+<h2 id="predicted-values">Predicted values<a class="anchor" aria-label="anchor" href="#predicted-values"></a>
+</h2>
+<p>You can predict durations for individual dominance phases via
+<code><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict()</a></code> function. You have an option of getting a summary
+(an average expected duration plus an optional credible interval) or
+computing predicted durations for every sample.</p>
+<p>For summary statistics with 89% credible interval.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">predictions</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">gam_fit</span>, summary <span class="op">=</span> <span class="cn">TRUE</span>, probs <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="fl">0.89</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span>, <span class="fl">1</span> <span class="op">-</span> <span class="op">(</span><span class="fl">1</span><span class="op">-</span><span class="fl">0.89</span><span class="op">)</span><span class="op">/</span><span class="fl">2</span><span class="op">)</span><span class="op">)</span></code></pre></div>
+<p>Predictions for every sample for <em>full length time-series</em>
+(invalid samples are filled with <code>NA</code>):</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">prediction_samples</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">gam_fit</span>, summary <span class="op">=</span> <span class="cn">FALSE</span>, full_length <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<p>Predictions for every sample only for valid samples:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">prediction_samples</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/predict.html" class="external-link">predict</a></span><span class="op">(</span><span class="va">gam_fit</span>, summary <span class="op">=</span> <span class="cn">FALSE</span>, full_length <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="computing-and-using-cumulative-history">Computing and using cumulative history<a class="anchor" aria-label="anchor" href="#computing-and-using-cumulative-history"></a>
 </h2>
-<p>If you are interested in the cumulative history itself, you can extract from the fitted object via <code><a href="../reference/extract_history.html">extract_history()</a></code> function</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">H</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/extract_history.html">extract_history</a></span><span class="op">(</span><span class="va">gam_fit</span><span class="op">)</span></code></pre></div>
-<p>Alternatively, you can skip fitting and compute history directly using predefined values via <code><a href="../reference/compute_history.html">compute_history()</a></code>.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<p>If you are interested in the cumulative history itself, you can
+extract from the fitted object via <code><a href="../reference/predict_history.html">predict_history()</a></code>
+function. Note that there are five different history types you can
+extract:</p>
+<ul>
+<li>
+<code>"1"</code>: cumulative history for the first perceptual state,
+i.e., state with index of 1.</li>
+<li>
+<code>"2"</code>: cumulative history for the second perceptual
+state, i.e., state with index of 2.</li>
+<li>
+<code>"dominant"</code>: for the state that is dominant during the
+following phase.</li>
+<li>
+<code>"suppressed"</code>: for the state that is suppressed during
+the following phase.</li>
+<li>
+<code>"difference"</code>: difference between cumulative histories
+(<span class="math inline">\(\Delta h = h_{suppressed} -
+h{dominant}\)</span>), which is used in linear models.</li>
+</ul>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">H</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/predict_history.html">predict_history</a></span><span class="op">(</span><span class="va">gam_fit</span>, <span class="st">"difference"</span><span class="op">)</span></code></pre></div>
+<p>Alternatively, you can skip fitting and compute history directly
+using predefined values via <code><a href="../reference/compute_history.html">compute_history()</a></code>.</p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/compute_history.html">compute_history</a></span><span class="op">(</span><span class="va">br_singleblock</span>,
                       state<span class="op">=</span><span class="st">"State"</span>,
                       duration<span class="op">=</span><span class="st">"Duration"</span>, 
@@ -255,16 +399,27 @@ log(shape[i]) = \alpha[R_i] + \beta_H[R_i] \cdot \Delta h[i] \\
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-Brascamp2019" class="csl-entry">
-Brascamp, Jan W., Cheng Stella Qian, David Z. Hambrick, and Mark W. Becker. 2019. <span>“<span class="nocase">Individual differences point to two separate processes involved in the resolution of binocular rivalry</span>.”</span> <em>Journal of Vision</em> 19 (12): 15. <a href="https://doi.org/10.1167/19.12.15" class="external-link">https://doi.org/10.1167/19.12.15</a>.
+Brascamp, Jan W., Cheng Stella Qian, David Z. Hambrick, and Mark W.
+Becker. 2019. <span>“<span class="nocase">Individual differences point
+to two separate processes involved in the resolution of binocular
+rivalry</span>.”</span> <em>Journal of Vision</em> 19 (12): 15. <a href="https://doi.org/10.1167/19.12.15" class="external-link">https://doi.org/10.1167/19.12.15</a>.
 </div>
 <div id="ref-Carpenter2017" class="csl-entry">
-Carpenter, Bob, Andrew Gelman, Matthew D. Hoffman, Daniel Lee, Ben Goodrich, Michael Betancourt, Marcus Brubaker, Jiqiang Guo, Peter Li, and Allen Riddell. 2017. <span>“<span>Stan : A Probabilistic Programming Language</span>.”</span> <em>Journal of Statistical Software</em> 76 (1). <a href="https://doi.org/10.18637/jss.v076.i01" class="external-link">https://doi.org/10.18637/jss.v076.i01</a>.
+Carpenter, Bob, Andrew Gelman, Matthew D. Hoffman, Daniel Lee, Ben
+Goodrich, Michael Betancourt, Marcus Brubaker, Jiqiang Guo, Peter Li,
+and Allen Riddell. 2017. <span>“<span>Stan : A Probabilistic Programming
+Language</span>.”</span> <em>Journal of Statistical Software</em> 76
+(1). <a href="https://doi.org/10.18637/jss.v076.i01" class="external-link">https://doi.org/10.18637/jss.v076.i01</a>.
 </div>
 <div id="ref-Suzuki2007" class="csl-entry">
-Suzuki, Satoru, and Marcia Grabowecky. 2007. <span>“<span class="nocase">Long-term speeding in perceptual switches mediated by attention-dependent plasticity in cortical visual processing.</span>”</span> <em>Neuron</em> 56 (4): 741–53. <a href="https://doi.org/10.1016/j.neuron.2007.09.028" class="external-link">https://doi.org/10.1016/j.neuron.2007.09.028</a>.
+Suzuki, Satoru, and Marcia Grabowecky. 2007. <span>“<span class="nocase">Long-term speeding in perceptual switches mediated by
+attention-dependent plasticity in cortical visual
+processing.</span>”</span> <em>Neuron</em> 56 (4): 741–53. <a href="https://doi.org/10.1016/j.neuron.2007.09.028" class="external-link">https://doi.org/10.1016/j.neuron.2007.09.028</a>.
 </div>
 <div id="ref-Vehtari2017" class="csl-entry">
-Vehtari, Aki, Andrew Gelman, and Jonah Gabry. 2017. <span>“<span class="nocase">Practical Bayesian model evaluation using leave-one-out cross-validation and WAIC</span>.”</span> <em>Statistics and Computing</em> 27 (5): 1413–32. <a href="https://doi.org/10.1007/s11222-016-9696-4" class="external-link">https://doi.org/10.1007/s11222-016-9696-4</a>.
+Vehtari, Aki, Andrew Gelman, and Jonah Gabry. 2017. <span>“<span class="nocase">Practical Bayesian model evaluation using leave-one-out
+cross-validation and WAIC</span>.”</span> <em>Statistics and
+Computing</em> 27 (5): 1413–32. <a href="https://doi.org/10.1007/s11222-016-9696-4" class="external-link">https://doi.org/10.1007/s11222-016-9696-4</a>.
 </div>
 </div>
 </div>
@@ -276,12 +431,15 @@ Vehtari, Aki, Andrew Gelman, and Jonah Gabry. 2017. <span>“<span class="nocase
 
     <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by <a href="https://alexander-pastukhov.github.io/" class="external-link">Alexander Pastukhov</a>.</p>
+<p>Developed by
+<a href="https://alexander-pastukhov.github.io/" class="external-link">Alexander
+Pastukhov</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.</p>
 </div>
 
     </footer>

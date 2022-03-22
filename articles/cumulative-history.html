@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">bistablehistory</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.1.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -74,9 +74,10 @@
 <div class="row">
   <main id="main"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Cumulative History</h1>
-                        <h4 data-toc-skip class="author">Alexander (Sasha) Pastukhov</h4>
+                        <h4 data-toc-skip class="author">Alexander
+(Sasha) Pastukhov</h4>
             
-            <h4 data-toc-skip class="date">2022-02-17</h4>
+            <h4 data-toc-skip class="date">2022-03-22</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/alexander-pastukhov/bistablehistory/blob/HEAD/vignettes/cumulative-history.Rmd" class="external-link"><code>vignettes/cumulative-history.Rmd</code></a></small>
       <div class="d-none name"><code>cumulative-history.Rmd</code></div>
@@ -84,44 +85,112 @@
 
     
     
-<p>Certain stimuli, such as a Necker cube depicted below, are compatible with several, typically two, comparably likely perceptual interpretations. In case of the Necker cube, one can perceive as “upwards” or “downwards” and during continuous viewing the perception alternates between these alternatives (these alternations are schematically depicted on the right).</p>
+<p>Certain stimuli, such as a Necker cube depicted below, are compatible
+with several, typically two, comparably likely perceptual
+interpretations. In case of the Necker cube, one can perceive as
+“upwards” or “downwards” and during continuous viewing the perception
+alternates between these alternatives (these alternations are
+schematically depicted on the right).</p>
 <p><img src="nc-stimulus.png" width="80%" style="display: block; margin: auto;"></p>
-<p>A distribution of these so-called dominance phases typically has a right-skewed distribution that is frequently fitted using Gamma distribution.</p>
+<p>A distribution of these so-called dominance phases typically has a
+right-skewed distribution that is frequently fitted using Gamma
+distribution.</p>
 <p><img src="gamma-distribution.png" width="80%" style="display: block; margin: auto;"></p>
-<p>However, the individual dominance phases show a subtle but consistent serial dependence, see, for example, <span class="citation">(van Ee 2009)</span>. This serial dependence is thought to reflect accumulation of slow adaptation <span class="citation">(Pastukhov et al. 2013)</span> or prediction error <span class="citation">(Weilnhammer et al. 2017)</span> for the dominant percept. This slow accumulation process can be described via a homogeneous first order process. A brief summary on the formula and examples of accumulation over time for different initial values, signal strength, and time constants are presented below. For further details, please refer to <span class="citation">(Pastukhov and Braun 2011)</span>.</p>
+<p>However, the individual dominance phases show a subtle but consistent
+serial dependence, see, for example, <span class="citation">(van Ee
+2009)</span>. This serial dependence is thought to reflect accumulation
+of slow adaptation <span class="citation">(Pastukhov et al. 2013)</span>
+or prediction error <span class="citation">(Weilnhammer et al.
+2017)</span> for the dominant percept. This slow accumulation process
+can be described via a homogeneous first order process. A brief summary
+on the formula and examples of accumulation over time for different
+initial values, signal strength, and time constants are presented below.
+For further details, please refer to <span class="citation">(Pastukhov
+and Braun 2011)</span>.</p>
 <hr>
-<p>The cumulative history for a perceptual state is computed via a homogeneous first order process (for details on first order linear differential equations please refer to chapter 2 in <span class="citation">Wilson (1999)</span>): <span class="math display">\[\tag{1}\frac{dh_i}{dt} = \frac{1}{\tau} (-h_i + S_i(t))\]</span></p>
-<p>where <span class="math inline">\(\tau\)</span> is the time constant, <span class="math inline">\(h_i\)</span> is cumulative history and <span class="math inline">\(S_i(t)\)</span> is current signal level for for the i<sup>th</sup> perceptual state, so that <span class="math display">\[\tag{2}
+<p>The cumulative history for a perceptual state is computed via a
+homogeneous first order process (for details on first order linear
+differential equations please refer to chapter 2 in <span class="citation">Wilson (1999)</span>): <span class="math display">\[\tag{1}\frac{dh_i}{dt} = \frac{1}{\tau} (-h_i +
+S_i(t))\]</span></p>
+<p>where <span class="math inline">\(\tau\)</span> is the time constant,
+<span class="math inline">\(h_i\)</span> is cumulative history and <span class="math inline">\(S_i(t)\)</span> is current signal level for for
+the i<sup>th</sup> perceptual state, so that <span class="math display">\[\tag{2}
 S(t) = \begin{cases}
   1 &amp; \text{if state $i$ is dominant}\\
   0 &amp; \text{if state $i$ is suppressed}\\
-  S_{mixed} &amp; \text{if it is a mixed/transition phase and $0 ≥ S_{mixed} ≥1 $}
+  S_{mixed} &amp; \text{if it is a mixed/transition phase and $0 ≥
+S_{mixed} ≥1 $}
 \end{cases}\]</span></p>
-<p>where <span class="math inline">\(S_{mixed}\)</span> corresponds to the <code>mixed_state</code> parameter that can be either specified (the <code><a href="../reference/fit_cumhist.html">fit_cumhist()</a></code> function uses a default of <code>0.5</code>) or fitted. The general solution for the equation (see Theorem 1 in <span class="citation">Wilson (1999)</span>, chapter 2, page 15) is</p>
-<p><span class="math display">\[\tag{3}h_i(t) = A e^{-t/\tau} + \frac{1}{\tau} \int_{0}^{t} e^{-(t'-t)/\tau} S(t') dt'\]</span></p>
-<p>where <span class="math inline">\(A\)</span> is chosen to satisfy the initial condition. Assuming a constant signal <span class="math inline">\(S\)</span>, we obtain <span class="math display">\[\tag{4}h_i(t) = A e^{-t/\tau} + S_i \cdot (1 - e^{-t/\tau})\]</span></p>
-<p>For the cumulative history, we are interested in <span class="math inline">\(h_i(t + \Delta t)\)</span>: a change following a dominance phase that starts at time <span class="math inline">\(t\)</span>, ends at time <span class="math inline">\(t + \Delta t\)</span>, and has a constant signal strength <span class="math inline">\(S_i\)</span>. Assuming that a dominance phase starts at <span class="math inline">\(t=0\)</span> and substituting into the equation 4, <span class="math inline">\(h_i(0) = A\)</span>. In other words, constant <span class="math inline">\(A\)</span> is equal to cumulative history state before the dominance phase onset and, therefore, the relative signal strength during the dominance phase is determined by the difference between the signal strength and the initial cumulative history value: <span class="math inline">\(S_i - h_i(0)\)</span>. Thus <span class="math display">\[\tag{5} h_i(\Delta t) = h_i(0) + (S - h_i(0)) \cdot (1 - e^{-\Delta t/\tau})\]</span> <span class="math display">\[\tag{6} h_i(\Delta t) = S + (h_i(0) - S)  \cdot e^{-\Delta t/\tau}\]</span></p>
-<p>The figure below shows accumulation over time for three different initial values (<span class="math inline">\(x(0)\)</span>), signal strength (<span class="math inline">\(S\)</span>), and and time constants (<span class="math inline">\(tau\)</span>). Note that the package allows to either specify and fit both the time constant (argument <code>tau</code> in <code><a href="../reference/fit_cumhist.html">fit_cumhist()</a></code> function) and the initial history value at the block (<code>history_init</code> argument).</p>
+<p>where <span class="math inline">\(S_{mixed}\)</span> corresponds to
+the <code>mixed_state</code> parameter that can be either specified (the
+<code><a href="../reference/fit_cumhist.html">fit_cumhist()</a></code> function uses a default of <code>0.5</code>)
+or fitted. The general solution for the equation (see Theorem 1 in <span class="citation">Wilson (1999)</span>, chapter 2, page 15) is</p>
+<p><span class="math display">\[\tag{3}h_i(t) = A e^{-t/\tau} +
+\frac{1}{\tau} \int_{0}^{t} e^{-(t'-t)/\tau} S(t')
+dt'\]</span></p>
+<p>where <span class="math inline">\(A\)</span> is chosen to satisfy the
+initial condition. Assuming a constant signal <span class="math inline">\(S\)</span>, we obtain <span class="math display">\[\tag{4}h_i(t) = A e^{-t/\tau} + S_i \cdot (1 -
+e^{-t/\tau})\]</span></p>
+<p>For the cumulative history, we are interested in <span class="math inline">\(h_i(t + \Delta t)\)</span>: a change following a
+dominance phase that starts at time <span class="math inline">\(t\)</span>, ends at time <span class="math inline">\(t + \Delta t\)</span>, and has a constant signal
+strength <span class="math inline">\(S_i\)</span>. Assuming that a
+dominance phase starts at <span class="math inline">\(t=0\)</span> and
+substituting into the equation 4, <span class="math inline">\(h_i(0) =
+A\)</span>. In other words, constant <span class="math inline">\(A\)</span> is equal to cumulative history state
+before the dominance phase onset and, therefore, the relative signal
+strength during the dominance phase is determined by the difference
+between the signal strength and the initial cumulative history value:
+<span class="math inline">\(S_i - h_i(0)\)</span>. Thus <span class="math display">\[\tag{5} h_i(\Delta t) = h_i(0) + (S - h_i(0))
+\cdot (1 - e^{-\Delta t/\tau})\]</span> <span class="math display">\[\tag{6} h_i(\Delta t) = S + (h_i(0) - S)  \cdot
+e^{-\Delta t/\tau}\]</span></p>
+<p>The figure below shows accumulation over time for three different
+initial values (<span class="math inline">\(x(0)\)</span>), signal
+strength (<span class="math inline">\(S\)</span>), and and time
+constants (<span class="math inline">\(tau\)</span>). Note that the
+package allows to either specify and fit both the time constant
+(argument <code>tau</code> in <code><a href="../reference/fit_cumhist.html">fit_cumhist()</a></code> function) and
+the initial history value at the block (<code>history_init</code>
+argument).</p>
 <p><img src="cumulative-history_files/figure-html/unnamed-chunk-3-1.png" width="80%" style="display: block; margin: auto;"></p>
-<p>As for a bistable case there are two history states (one for each perceptual state), we compute a history as a difference of cumulative histories <span class="math display">\[\tag{7}\Delta h(t, \tau) = h_{suppressed}(t, \tau) - h_{dominant}(t, \tau) \]</span> where <span class="math inline">\(h_{dominant}\)</span> and <span class="math inline">\(h_{suppressed}\)</span> are history states for the currently dominant and suppressed states, respectively. <em>E.g.</em>, if a left eye dominates during following phase, <span class="math inline">\(h_{dominant} = h_{left}\)</span> and <span class="math inline">\(h_{suppressed} = h_{right}\)</span> and vice versa.</p>
+<p>As for a bistable case there are two history states (one for each
+perceptual state), we compute a history as a difference of cumulative
+histories <span class="math display">\[\tag{7}\Delta h(t, \tau) =
+h_{suppressed}(t, \tau) - h_{dominant}(t, \tau) \]</span> where <span class="math inline">\(h_{dominant}\)</span> and <span class="math inline">\(h_{suppressed}\)</span> are history states for the
+currently dominant and suppressed states, respectively. <em>E.g.</em>,
+if a left eye dominates during following phase, <span class="math inline">\(h_{dominant} = h_{left}\)</span> and <span class="math inline">\(h_{suppressed} = h_{right}\)</span> and vice
+versa.</p>
 <div class="section level2">
 <h2 id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
 <div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-PastukhovBraun2011" class="csl-entry">
-Pastukhov, Alexander, and Jochen Braun. 2011. <span>“<span class="nocase">Cumulative history quantifies the role of neural adaptation in multistable perception</span>.”</span> <em>Journal of Vision</em> 11 (10): 12–12. <a href="https://doi.org/10.1167/11.10.12" class="external-link">https://doi.org/10.1167/11.10.12</a>.
+Pastukhov, Alexander, and Jochen Braun. 2011. <span>“<span class="nocase">Cumulative history quantifies the role of neural
+adaptation in multistable perception</span>.”</span> <em>Journal of
+Vision</em> 11 (10): 12–12. <a href="https://doi.org/10.1167/11.10.12" class="external-link">https://doi.org/10.1167/11.10.12</a>.
 </div>
 <div id="ref-Pastukhov2013" class="csl-entry">
-Pastukhov, Alexander, Pedro E García-Rodríguez, Joachim Haenicke, Antoni Guillamon, Gustavo Deco, and Jochen Braun. 2013. <span>“<span class="nocase">Multi-stable perception balances stability and sensitivity</span>.”</span> <em>Frontiers in Computational Neuroscience</em> 7 (17): 17. <a href="https://doi.org/10.3389/fncom.2013.00017" class="external-link">https://doi.org/10.3389/fncom.2013.00017</a>.
+Pastukhov, Alexander, Pedro E García-Rodríguez, Joachim Haenicke, Antoni
+Guillamon, Gustavo Deco, and Jochen Braun. 2013. <span>“<span class="nocase">Multi-stable perception balances stability and
+sensitivity</span>.”</span> <em>Frontiers in Computational
+Neuroscience</em> 7 (17): 17. <a href="https://doi.org/10.3389/fncom.2013.00017" class="external-link">https://doi.org/10.3389/fncom.2013.00017</a>.
 </div>
 <div id="ref-VanEe2009" class="csl-entry">
-van Ee, Raymond. 2009. <span>“<span class="nocase">Stochastic variations in sensory awareness are driven by noisy neuronal adaptation: evidence from serial correlations in perceptual bistability</span>.”</span> <em>Journal of the Optical Society of America A</em> 26 (12): 2612. <a href="https://doi.org/10.1364/JOSAA.26.002612" class="external-link">https://doi.org/10.1364/JOSAA.26.002612</a>.
+van Ee, Raymond. 2009. <span>“<span class="nocase">Stochastic variations
+in sensory awareness are driven by noisy neuronal adaptation: evidence
+from serial correlations in perceptual bistability</span>.”</span>
+<em>Journal of the Optical Society of America A</em> 26 (12): 2612. <a href="https://doi.org/10.1364/JOSAA.26.002612" class="external-link">https://doi.org/10.1364/JOSAA.26.002612</a>.
 </div>
 <div id="ref-Weilnhammer2017" class="csl-entry">
-Weilnhammer, Veith A., Heiner Stuke, Guido Hesselmann, Philipp Sterzer, and Katharina Schmack. 2017. <span>“<span class="nocase">A predictive coding account of bistable perception - a model-based fMRI study</span>.”</span> Edited by Jean Daunizeau. <em>PLOS Computational Biology</em> 13 (5): e1005536. <a href="https://doi.org/10.1371/journal.pcbi.1005536" class="external-link">https://doi.org/10.1371/journal.pcbi.1005536</a>.
+Weilnhammer, Veith A., Heiner Stuke, Guido Hesselmann, Philipp Sterzer,
+and Katharina Schmack. 2017. <span>“<span class="nocase">A predictive
+coding account of bistable perception - a model-based fMRI
+study</span>.”</span> Edited by Jean Daunizeau. <em>PLOS Computational
+Biology</em> 13 (5): e1005536. <a href="https://doi.org/10.1371/journal.pcbi.1005536" class="external-link">https://doi.org/10.1371/journal.pcbi.1005536</a>.
 </div>
 <div id="ref-Wilson1999" class="csl-entry">
-Wilson, Hugh R. 1999. <em><span class="nocase">Spikes, Decisions &amp; Actions: Dynamical Foundations of Neuroscience</span></em>. Oxford UK: Oxford University Press.
+Wilson, Hugh R. 1999. <em><span class="nocase">Spikes, Decisions &amp;
+Actions: Dynamical Foundations of Neuroscience</span></em>. Oxford UK:
+Oxford University Press.
 </div>
 </div>
 </div>
@@ -133,12 +202,15 @@ Wilson, Hugh R. 1999. <em><span class="nocase">Spikes, Decisions &amp; Actions: 
 
     <footer><div class="pkgdown-footer-left">
   <p></p>
-<p>Developed by <a href="https://alexander-pastukhov.github.io/" class="external-link">Alexander Pastukhov</a>.</p>
+<p>Developed by
+<a href="https://alexander-pastukhov.github.io/" class="external-link">Alexander
+Pastukhov</a>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.2.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a>
+2.0.2.</p>
 </div>
 
     </footer>
