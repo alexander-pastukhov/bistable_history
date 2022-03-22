@@ -14,3 +14,7 @@
 * Use for scale instead of rate for prediction for Gamma family.
 * Spelling in documentation.
 * Additional tests.
+
+# bistablehistory 1.1.1
+## Improvements
+* Posterior samples for cumulative history
