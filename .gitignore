@@ -4,3 +4,5 @@ inst/doc
 .Rhistory
 .Rbuildignore
 docs
+src/*.o
+src/*.dll
