@@ -1,0 +1,20 @@
+citHeader("To cite bistablehistory in publications use:")
+
+citEntry(
+  entry    = "Article",
+  title    = "bistablehistory: an R package for history-dependent
+analysis of perceptual time series",
+  author   = "Alexander Pastukhov",
+  journal  = "The Journal of Open Source Software",
+  year     = "2022",
+  volume   = "7",
+  number   = "70",
+  pages    = "3901",
+  url      = "https://joss.theoj.org/papers/10.21105/joss.03901",
+  doi      = "10.21105/joss.03901",
+  textVersion = paste("Pastukhov, A., (2022).",
+                      "bistablehistory: an R package for history-dependent analysis of perceptual time series.",
+                      "Journal of Open Source Software, 7(70), 3901,",
+                      "doi:10.21105/joss.03901"
+  )
+)
