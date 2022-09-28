@@ -16,8 +16,8 @@ I.e., it assumes exponential growth/decay of the history as a function
 of time and perceptually dominant state. Supports Gamma, log normal, and
 normal distribution families.
 
-For details on rationale please refer to
-([Pastukhov & Braun, 2011](https://doi.org/10.1167/11.10.12)).
+If you use the toolbox in your work, please cite *Pastukhov, A., (2022). bistablehistory: an R package for history-dependent analysis of perceptual time series. Journal of Open Source Software, 7(70), 3901, https://doi.org/10.21105/joss.03901*
+
 
 ## Installation
 
