@@ -116,16 +116,16 @@ phases that will be used to compute their duration.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1 x 3</span></span></span>
 <span><span class="co">#&gt;   Estimate `5.5%` `94.5%`</span></span>
 <span><span class="co">#&gt;      <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>    0.995  0.781    1.25</span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span>    0.986  0.783    1.23</span></span></code></pre></div>
 <p>and main effect of history for both parameters of gamma
 distribution</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/historyef.html">historyef</a></span><span class="op">(</span><span class="va">gamma_fit</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 2 x 4</span></span></span>
-<span><span class="co">#&gt;   DistributionParameter Estimate  `5.5%` `94.5%`</span></span>
-<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> shape                    1.01   0.022<span style="text-decoration: underline;">7</span>    1.98</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> scale                    0.321 -<span style="color: #BB0000;">0.803</span>     1.44</span></span></code></pre></div>
+<span><span class="co">#&gt;   DistributionParameter Estimate `5.5%` `94.5%`</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>                    <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>   <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> shape                    1.05   0.120    1.92</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> scale                    0.269 -<span style="color: #BB0000;">0.676</span>    1.31</span></span></code></pre></div>
 <p>The following model is fitted for the example above, see also <a href="cumulative-history.html">companion vignette</a> for details on
 cumulative history computation. <span class="math display">\[Duration[i]
 \sim  Gamma(shape[i], rate[i]) \\

@@ -5,7 +5,7 @@ articles:
   cumulative-history: cumulative-history.html
   usage-examples: usage-examples.html
   writing-stan-code: writing-stan-code.html
-last_built: 2022-09-26T11:52Z
+last_built: 2022-09-28T09:16Z
 urls:
   reference: https://alexander-pastukhov.github.io/bistablehistory/reference
   article: https://alexander-pastukhov.github.io/bistablehistory/articles
