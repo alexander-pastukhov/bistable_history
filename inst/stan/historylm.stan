@@ -52,26 +52,26 @@ data{
 
     // --- Complete time-series ---
     int<lower=1> rowsN;   // Number of rows in the COMPLETE multi-timeseries table including mixed phase.
-    real duration[rowsN]; // Duration of a dominance/transition phase
-    int istate[rowsN];     // Index of a dominance istate, 1 and 2 code for two competing clear states, 3 - transition/mixed.
-    int is_used[rowsN];   // Whether history value must used to predict duration or ignored (mixed phases, warm-up period, last, etc.)
-    int run_start[rowsN]; // 1 marks a beginning of the new time-series (run/block/etc.)
-    real session_tmean[rowsN];    // Mean dominance phase duration for both CLEAR percepts. Used to scale time-constant.
+    array[rowsN] real duration; // Duration of a dominance/transition phase
+    array[rowsN] int istate;     // Index of a dominance istate, 1 and 2 code for two competing clear states, 3 - transition/mixed.
+    array[rowsN] int is_used;   // Whether history value must used to predict duration or ignored (mixed phases, warm-up period, last, etc.)
+    array[rowsN] int run_start; // 1 marks a beginning of the new time-series (run/block/etc.)
+    array[rowsN] real session_tmean;    // Mean dominance phase duration for both CLEAR percepts. Used to scale time-constant.
 
     // --- A shorter clear-states only time-series ---
     int clearN;                  // Number of rows in the clear-states only time-series
-    real clear_duration[clearN]; // Durations of clear percepts only.
+    array[clearN] real clear_duration; // Durations of clear percepts only.
 
     // --- Random effects ---
     int<lower=1> randomN;                               // Number of levels for random effects
-    int<lower=1, upper=randomN> irandom[rowsN];         // Index of a random effect cluster (participant, display, etc.)
+    array[rowsN] int<lower=1, upper=randomN> irandom;         // Index of a random effect cluster (participant, display, etc.)
 
     // --- Fixed effects ---
     int<lower=0> fixedN;
     matrix[rowsN, fixedN > 0 ? fixedN : 0] fixed;
 
     // --- Cumulative history parameters
-    real<lower=0, upper=1> history_starting_values[2]; // Starting values for cumulative history at the beginning of the run
+    array[2] real<lower=0, upper=1> history_starting_values; // Starting values for cumulative history at the beginning of the run
 
     // time constant
     int<lower=1, upper=4> tau_option;  // 1 - constant provided by user, 2 - fit single tau for all, 3 - independent taus, 4 - pooled (multilevel) taus
@@ -79,7 +79,7 @@ data{
     int tau_mu_size;                   // dimensionality, 1 - sampled, 0 - unused
     int tau_sigma_size;                // dimensionality, 1 - sampled, 0 - unused
     int tau_rnd_size;                  // dimensionality, randomN - sampled, 0 - unused
-    real tau_prior[2];                 // prior
+    array[2] real tau_prior;                 // prior
 
     // Mixed state
     int<lower=1, upper=4> mixed_state_option; // 1 - constant provided by user, 2 - fit single tau for all, 3 - independent taus, 4 - pooled (multilevel) taus
@@ -87,17 +87,17 @@ data{
     int mixed_state_mu_size;                  // dimensionality, 1 - sampled, 0 - unused
     int mixed_state_sigma_size;               // dimensionality, 1 - sampled, 0 - unused
     int mixed_state_rnd_size;                 // dimensionality, randomN - sampled, 0 - unused
-    real mixed_state_prior[2];                // prior
+    array[2] real mixed_state_prior;                // prior
 
     // --- Linear model ---
     int<lower=1> lmN; // number of linear models, i.e., distribution parameters that are modelled
     int<lower=0, upper=1> varianceN; // number of variance parameters. Effectively, whether variance is sampled at all(1) or not (0)
 
     // intercept: independent for each parameter and random cluster
-    real a_prior[lmN, 2];
+    array[lmN, 2] real a_prior;
 
     // priors for effect of history
-    real bH_prior[lmN, 2];
+    array[lmN, 2] real bH_prior;
 
     // priors for fixed effects
     matrix[fixedN > 0 ? fixedN : 0, 2] fixed_priors;
@@ -137,25 +137,25 @@ parameters {
 
     // --- Linear model ---
     // Independent intercept for each random cluster
-    vector[randomN] a[lmN];
+    array[lmN] vector[randomN] a;
 
     // history term, always multilevel but this makes sense only for randomN > 1
-    real bH_mu[lmN];
-    real<lower=0> bH_sigma[randomN > 1 ? lmN : 0];
-    vector[randomN > 1 ? randomN : 0] bH_rnd[randomN > 1 ? lmN : 0];
+    array[lmN] real bH_mu;
+    array[randomN > 1 ? lmN : 0] real<lower=0> bH_sigma;
+    array[randomN > 1 ? lmN : 0] vector[randomN > 1 ? randomN : 0] bH_rnd;
 
     // fixed-effects
-    row_vector[fixedN] bF[fixedN > 0 ? lmN : 0];
+    array[fixedN > 0 ? lmN : 0] row_vector[fixedN] bF;
 
     // variance
     vector<lower=0>[varianceN] sigma;
 }
 transformed parameters {
-    vector[clearN] lm_param[lmN];
+    array[lmN] vector[clearN] lm_param;
     {
         // Service variables for computing cumulative history
         matrix[2, 3] level;
-        real current_history[2];
+        array[2] real current_history;
         real tau;
         real dH;
 
@@ -165,7 +165,7 @@ transformed parameters {
         // Cumulative history parameters
         vector[randomN] tau_ind = expand_history_param_to_individuals(tau_option, fixed_tau, tau_mu, tau_sigma, tau_rnd, randomN, lfLog);
         vector[randomN] mixed_state_ind = expand_history_param_to_individuals(mixed_state_option, fixed_mixed_state, mixed_state_mu, mixed_state_sigma, mixed_state_rnd, randomN, lfLogit);
-        vector[randomN] bH_ind[lmN];
+        array[lmN] vector[randomN] bH_ind;
         for(iLM in 1:lmN) {
             if (randomN == 1) {
                 bH_ind[iLM] = rep_vector(bH_mu[iLM], randomN);
