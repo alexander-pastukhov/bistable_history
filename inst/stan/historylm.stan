@@ -140,7 +140,7 @@ parameters {
     array[lmN] vector[randomN] a;
 
     // history term, always multilevel but this makes sense only for randomN > 1
-    array[lmN] real bH_mu;
+    vector[lmN] bH_mu;
     array[randomN > 1 ? lmN : 0] real<lower=0> bH_sigma;
     array[randomN > 1 ? lmN : 0] vector[randomN > 1 ? randomN : 0] bH_rnd;
 
@@ -155,7 +155,7 @@ transformed parameters {
     {
         // Service variables for computing cumulative history
         matrix[2, 3] level;
-        array[2] real current_history;
+        vector[2] current_history;
         real tau;
         real dH;
 
@@ -178,7 +178,7 @@ transformed parameters {
         for(iT in 1:rowsN){
             // new time-series, recompute absolute tau and reset history state
             if (run_start[iT]){
-                current_history = history_starting_values;
+                current_history = to_vector(history_starting_values);
                 tau = session_tmean[iT] * tau_ind[irandom[iT]];
 
                 // matrix with signal levels
